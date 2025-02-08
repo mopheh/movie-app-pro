@@ -1,0 +1,101 @@
+"use client";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  DefaultValues,
+  FieldValues,
+  SubmitHandler,
+  useForm,
+  UseFormReturn,
+} from "react-hook-form";
+import { z, ZodType } from "zod";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import Link from "next/link";
+import { FIELD_NAMES, FIELD_TYPES } from "@/constants";
+
+interface Props<T extends FieldValues> {
+  type: "SIGN_IN" | "SIGN_UP" | "SIGN_OUT";
+  schema: ZodType<T>;
+  defaultValues?: T;
+  onSubmit: (data: T) => Promise<{ success: boolean; error?: string }>;
+}
+
+const AuthForm = <T extends FieldValues>({
+  type,
+  schema,
+  defaultValues,
+  onSubmit,
+}: Props<T>) => {
+  const isSignIn = type === "SIGN_IN";
+
+  const form: UseFormReturn<T> = useForm({
+    resolver: zodResolver(schema),
+    defaultValues: defaultValues as DefaultValues<T>,
+  });
+
+  const handleSubmit: SubmitHandler<T> = (data: any) => {};
+  return (
+    <div className={"flex flex-col w-full gap-4 font-lato"}>
+      <h1 className={"text-2xl font-semibold text-white"}>
+        {isSignIn ? "Welcome back to Strimz" : "Create your account "}
+      </h1>
+      <p className={"text-light-100"}>
+        {isSignIn
+          ? "Get access to blockbuster movies and stay updated."
+          : "Please complete all fields and upload a valid university ID to gain access to the library"}
+      </p>
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(handleSubmit)}
+          className="space-y-6 w-full"
+        >
+          {Object.keys(defaultValues).map((field) => (
+            <FormField
+              key={field}
+              control={form.control}
+              name={field as Path<T>}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className={"capitalize"}>
+                    {FIELD_NAMES[field.name as keyof typeof FIELD_NAMES]}
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      required
+                      type={FIELD_TYPES[field.name as keyof typeof FIELD_TYPES]}
+                      className={"form-input"}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          ))}
+          <Button type="submit" className={"form-btn"}>
+            {isSignIn ? "Sign In" : "Sign Up"}
+          </Button>
+        </form>
+      </Form>
+      <p className={"text-center text-base font-medium"}>
+        {isSignIn ? "New to Strimz? " : "Already have an account? "}
+
+        <Link
+          href={isSignIn ? "/sign-up" : "/sign-in"}
+          className={"text-primary font-bold"}
+        >
+          {isSignIn ? "Create an account. " : "Sign In"}
+        </Link>
+      </p>
+    </div>
+  );
+};
+export default AuthForm;
