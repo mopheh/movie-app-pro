@@ -7,10 +7,7 @@
   :root {
     --radius: 0.5rem;
   }
-::placeholder {
-  font-family: "Poppins", sans-serif;
-  color: #12151f;
-}
+
   .hide-scrollbar::-webkit-scrollbar {
     width: 0px;
     height: 0px;
@@ -33,11 +30,11 @@
 
 @layer components {
   .form-btn {
-    @apply bg-primary text-dark-100 hover:bg-primary inline-flex min-h-14 w-full items-center justify-center rounded-md px-6 py-2 font-bold text-base !important;
+    @apply bg-green-600 text-white font-poppins hover:bg-green-500 inline-flex min-h-14 w-full items-center justify-center rounded-md px-6 py-2 font-bold text-base !important;
   }
 
   .form-input {
-    @apply w-full min-h-14 border-none text-base font-bold placeholder:font-normal text-white placeholder:text-light-100 focus-visible:ring-0 focus-visible:shadow-none bg-dark-300 !important;
+    @apply w-full min-h-14 border-none text-base font-bold placeholder:font-normal text-white placeholder:text-gray-500 focus-visible:ring-0 focus-visible:shadow-none bg-dark-300 !important;
   }
 
   /* Book Card */
@@ -252,7 +249,7 @@
   }
 
   .auth-box {
-    @apply gradient-vertical mx-auto flex max-w-xl w-4/12 flex-col gap-6 rounded-lg p-10;
+    @apply gradient-vertical mx-auto flex max-w-xl sm:w-4/12 flex-col gap-6  rounded-2xl p-10;
   }
 
   .auth-illustration {

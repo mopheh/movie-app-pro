@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import AuthForm from "@/components/AuthForm";
-import { signInSchema, signUpSchema } from "@/lib/validate";
+import { signUpSchema } from "@/lib/validate";
 
 const Page = () => (
   <AuthForm

@@ -2,7 +2,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   DefaultValues,
-  FieldValues,
+  FieldValues, Path,
   SubmitHandler,
   useForm,
   UseFormReturn,
@@ -47,7 +47,7 @@ const AuthForm = <T extends FieldValues>({
       <h1 className={"text-2xl font-semibold text-white"}>
         {isSignIn ? "Welcome back to Strimz" : "Create your account "}
       </h1>
-      <p className={"text-light-100"}>
+      <p className={"text-light-100 font-nunito-sans"}>
         {isSignIn
           ? "Get access to blockbuster movies and stay updated."
           : "Please complete all fields and upload a valid university ID to gain access to the library"}
@@ -64,14 +64,16 @@ const AuthForm = <T extends FieldValues>({
               name={field as Path<T>}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className={"capitalize"}>
+                  <FormLabel className={"capitalize font-sm font-poppins"}>
                     {FIELD_NAMES[field.name as keyof typeof FIELD_NAMES]}
                   </FormLabel>
                   <FormControl>
                     <Input
                       required
                       type={FIELD_TYPES[field.name as keyof typeof FIELD_TYPES]}
-                      className={"form-input"}
+                      className={"form-input placeholder:text-gray-800 placeholder:text-sm"}
+                      placeholder={field.name === "password" ? 'Atleast 8 character long': ""}
+                      autoComplete="off"
                       {...field}
                     />
                   </FormControl>
@@ -80,17 +82,17 @@ const AuthForm = <T extends FieldValues>({
               )}
             />
           ))}
-          <Button type="submit" className={"form-btn"}>
+          <Button type="submit" className={"form-btn font-medium"}>
             {isSignIn ? "Sign In" : "Sign Up"}
           </Button>
         </form>
       </Form>
-      <p className={"text-center text-base font-medium"}>
+      <p className={"text-center text-sm font-poppins font-medium"}>
         {isSignIn ? "New to Strimz? " : "Already have an account? "}
 
         <Link
           href={isSignIn ? "/sign-up" : "/sign-in"}
-          className={"text-primary font-bold"}
+          className={"text-green-500 font-bold"}
         >
           {isSignIn ? "Create an account. " : "Sign In"}
         </Link>

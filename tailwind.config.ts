@@ -10,6 +10,7 @@ export default {
 	theme: {
 		extend: {
 			fontFamily: {
+				"nunito-sans": ["Nunito Sans","sans-serif"],
 				"poppins": ["Poppins", "sans-serif"],
 				"lato": ["Lato", "sans-serif"],
 			},
@@ -107,7 +108,7 @@ export default {
 				sm: "calc(var(--radius) - 4px)",
 			},
 			backgroundImage: {
-				pattern: "url('/images/pattern.webp')",
+				pattern: "url('/images/pattern.svg')",
 			},
 		},
 	},
