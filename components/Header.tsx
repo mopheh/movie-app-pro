@@ -26,7 +26,7 @@ const Header = () => {
     },
   ];
   return (
-    <header className={"flex justify-between py-2 items-center"}>
+    <header className={"flex justify-between py-2 items-center relative z-50"}>
       <div className={"flex gap-6"}>
         <Link href="/" className={"flex flex-row items-center"}>
           <Image src={"/images/logo.png"} alt={"logo"} width={55} height={55} />
@@ -63,7 +63,7 @@ const Header = () => {
         <div className={"flex gap-3 items-center cursor-pointer"}>
           <div
             className={
-              "bg-primary rounded-full font-anton text-sm w-[32px] h-[32px] text-dark-300 flex items-center justify-center font-light tracking-wide"
+              "bg-primary rounded-full font-bebas-neue text-sm w-[32px] h-[32px] text-dark-300 flex items-center justify-center font-light tracking-wide"
             }
           >
             AO

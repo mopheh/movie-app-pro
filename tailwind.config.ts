@@ -11,7 +11,9 @@ export default {
     extend: {
       fontFamily: {
         "nunito-sans": ["Nunito Sans", "sans-serif"],
+        oswald: ["Oswald", "sans-serif"],
         poppins: ["Poppins", "sans-serif"],
+        "bebas-neue": ["Bebas Neue", "sans-serif"],
         anton: ["Anton", "sans-serif"],
         lato: ["Lato", "sans-serif"],
       },
