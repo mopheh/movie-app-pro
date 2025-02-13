@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 interface Movie {
   id: string;
   title: string;
@@ -7,6 +8,7 @@ interface Movie {
 }
 const Popular = () => {
   const [movies, setMovies] = useState<Movie[] | null>(null);
+  const router = useRouter();
   const getMovies = async () => {
     const movies = await fetch("/api/movies/popular");
     const data = await movies.json();
@@ -40,6 +42,7 @@ const Popular = () => {
                   src={`https://image.tmdb.org/t/p/original/${movie.poster_path}`}
                   alt={"movie"}
                   className={"cursor-pointer"}
+                  onClick={() => router.push(`/movie/${movie.id}`)}
                   width={200}
                   height={300}
                 />

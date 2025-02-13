@@ -67,7 +67,7 @@ const Overview = () => {
       const movieData = detailsText.trim() ? JSON.parse(detailsText) : {};
       setMovie(movieData);
       console.log(movieData);
-      fetchTrailer(movieData.videos);
+      await fetchTrailer(movieData.videos);
     } catch (error) {
       console.error("Error fetching movies:", error);
     }
