@@ -1,6 +1,12 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import {
+  LucideArrowBigLeft,
+  LucideMoveLeft,
+  LucideMoveRight,
+} from "lucide-react";
+import Skeleton from "@/components/Skeleton";
 interface Movie {
   id: string;
   title: string;
@@ -27,27 +33,26 @@ const Trending = () => {
     }
   };
   return (
-    movies && (
-      <div className={"flex flex-col gap-3 my-6 relative"}>
-        <h1
-          className={
-            "font-poppins uppercase font-semibold text-white my-3 text-2xl px-7 xs:px-12 md:px-20"
-          }
-        >
-          Trending
-        </h1>
-        <button
-          onClick={() => scroll(-300)}
-          className="absolute left-0 top-1/2 z-20 -translate-y-1/2 bg-black text-white p-2"
-        >
-          {"<"}
-        </button>
-        <div
-          ref={scrollRef}
-          className={"flex overflow-x-auto scroll-smooth hide-scrollbar "}
-        >
-          {movies ? (
-            movies.slice(0, 10).map((movie, index) => (
+    <div className={"flex flex-col gap-3 my-6 relative"}>
+      <h1
+        className={
+          "font-poppins uppercase font-semibold text-white my-3 text-2xl px-7 xs:px-12 md:px-20"
+        }
+      >
+        Trending
+      </h1>
+      <button
+        onClick={() => scroll(-300)}
+        className="absolute left-0 top-1/2 z-20 -translate-y-1/2 h-[300px] bg-white bg-opacity-10 text-white p-2"
+      >
+        <LucideMoveLeft />
+      </button>
+      <div
+        ref={scrollRef}
+        className={"flex overflow-x-auto scroll-smooth hide-scrollbar "}
+      >
+        {movies
+          ? movies.slice(0, 10).map((movie, index) => (
               <div
                 key={movie.id}
                 className={
@@ -72,18 +77,17 @@ const Trending = () => {
                 </Link>
               </div>
             ))
-          ) : (
-            <div className={"text-white"}>Loading</div>
-          )}
-        </div>
-        <button
-          onClick={() => scroll(300)}
-          className="absolute right-0 top-1/2 -translate-y-1/2 bg-black text-white p-2"
-        >
-          {">"}
-        </button>
+          : Array.from({ length: 8 }).map((_, index) => (
+              <Skeleton key={index} />
+            ))}
       </div>
-    )
+      <button
+        onClick={() => scroll(300)}
+        className="absolute right-0 top-1/2 -translate-y-1/2 h-[300px] bg-white bg-opacity-10 text-white p-2"
+      >
+        <LucideMoveRight />
+      </button>
+    </div>
   );
 };
 export default Trending;

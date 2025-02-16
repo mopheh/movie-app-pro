@@ -9,6 +9,8 @@ const ReactPlayer = dynamic(() => import("react-player/youtube"), {
   ssr: false,
 });
 import { motion, AnimatePresence } from "framer-motion";
+import { router } from "next/client";
+import { useRouter } from "next/navigation";
 type genre = {
   id: number;
   name: string;
@@ -38,13 +40,21 @@ const Overview = () => {
   const [trailer, setTrailer] = useState<string>();
   const [isMuted, setIsMuted] = useState<boolean>(true);
   const [mediaType, setMediaType] = useState<string>("");
+  const [englishLogo, setEnglishLogo] = useState<string>("");
   const [timeoutReached, setTimeoutReached] = useState<boolean>(false);
+  const router = useRouter();
   // @ts-ignore
   const playerRef = useRef<InstanceType<typeof ReactPlayer> | null>(null);
 
   const getMovies = async () => {
     try {
-      const movies = await fetch("/api/movies/trending");
+      const list = ["trending", "popular"];
+      const choice = list[Math.floor(Math.random() * 2)];
+      const movies =
+        choice === "trending"
+          ? await fetch("/api/movies/trending")
+          : await fetch("/api/movies/trending");
+
       if (!movies.ok) {
         throw new Error(`HTTP error! Status: ${movies.status}`);
       }
@@ -52,12 +62,12 @@ const Overview = () => {
       const text = await movies.text(); // Read as text first
       const data = text.trim() ? JSON.parse(text) : {};
       const randNum = Math.floor(Math.random() * data.results.length);
-      console.log(data);
+
       const movieId = data.results[randNum]?.id;
-      setMediaType(data.results[randNum]?.media_type);
+      setMediaType(data.results[randNum]?.media_type || "movie");
       console.log(movieId);
       const movieDetails = await fetch(
-        `/api/movies/details?id=${movieId}&type=${data.results[randNum]?.media_type}`,
+        `/api/movies/details?id=${movieId}&type=${data.results[randNum]?.media_type || "movie"}`,
       );
       if (!movieDetails.ok) {
         throw new Error(`HTTP error! Status: ${movieDetails.status}`);
@@ -66,7 +76,9 @@ const Overview = () => {
       const detailsText = await movieDetails.text(); // Read as text first
       const movieData = detailsText.trim() ? JSON.parse(detailsText) : {};
       setMovie(movieData);
-      console.log(movieData);
+      setEnglishLogo(
+        movieData?.images.logos.find((logo) => logo.iso_639_1 === "en"),
+      );
       await fetchTrailer(movieData.videos);
     } catch (error) {
       console.error("Error fetching movies:", error);
@@ -74,13 +86,15 @@ const Overview = () => {
   };
 
   const fetchTrailer = async (movie: MovieData) => {
-    const trailer =
-      movie.results.find(
-        (video: any) => video.type === "Clip" && video.site === "YouTube",
-      ) ||
-      movie.results.find(
-        (video: any) => video.type === "Trailer" && video.site === "YouTube",
-      );
+    const clips = movie.results.filter(
+      (video) => video.type === "Clip" && video.site === "YouTube",
+    );
+    const trailers = movie.results.filter(
+      (video) => video.type === "Trailer" && video.site === "YouTube",
+    );
+    const trailerList = clips.length > 0 ? clips : trailers;
+
+    const trailer = trailerList[Math.floor(Math.random() * trailerList.length)];
 
     if (trailer) {
       setTrailer(
@@ -94,7 +108,7 @@ const Overview = () => {
 
     const timer = setTimeout(() => {
       setShowVideo(true);
-    }, 5000);
+    }, 15000);
 
     return () => clearTimeout(timer);
   }, []);
@@ -161,14 +175,22 @@ const Overview = () => {
           {isMuted ? <VolumeX size={24} /> : <Volume2 size={24} />}
         </button>
       )}
-      <div className="absolute inset-0 bg-black opacity-20"></div>
+      <div className="absolute inset-0 bg-black opacity-10"></div>
       <div className={"text-white flex flex-col gap-6 max-w-2xl relative"}>
         <div>
           <span className={"text-sm uppercase tracking-widest"}>
             {mediaType === "tv" ? "Series" : mediaType}
           </span>
           <h1 className={"text-7xl font-anton tracking-tight"}>
-            {movie?.title || movie?.name}
+            {englishLogo ? (
+              <img
+                src={`https://image.tmdb.org/t/p/original/${englishLogo.file_path}`}
+                alt={movie?.title || movie?.name}
+                width={showVideo ? "50%" : "60%"}
+              />
+            ) : (
+              movie?.title || movie?.name
+            )}
           </h1>
         </div>
         <div className={"flex gap-5"}>
@@ -186,12 +208,13 @@ const Overview = () => {
               height={20}
             />
             <span className={"text-emerald-400"}>
-              {movie.vote_average} <span className={"text-white"}>/ 10</span>
+              {movie.vote_average.toFixed(1)}{" "}
+              <span className={"text-white"}>/ 10</span>
             </span>
           </div>
         </div>
         <AnimatePresence>
-          {!showVideo && (
+          {(!showVideo || !trailer) && (
             <motion.div
               className="relative z-10 text-white"
               initial={{ opacity: 1, y: 0, filter: "blur(0px)" }}
@@ -212,6 +235,7 @@ const Overview = () => {
             className={
               "bg-dark-300 text-white p-6 font-nunito-sans font-bold text-sm uppercase tracking-tight hover:text-dark-100"
             }
+            onClick={() => router.push(`/${mediaType}/${movie?.id}`)}
           >
             <Image
               src={"/icons/circle-info-solid.svg"}
@@ -240,15 +264,7 @@ const Overview = () => {
       </div>
     </div>
   ) : (
-    <div className="h-lvh w-full flex items-center justify-center backdrop-blur-sm">
-      <Image
-        src="/icons/loader.svg"
-        alt="loader"
-        width={32}
-        height={32}
-        className="animate-spin"
-      />
-    </div>
+    <div className="animate-pulse bg-gray-800 rounded-lg w-full h-[700px]" />
   );
 };
 export default Overview;

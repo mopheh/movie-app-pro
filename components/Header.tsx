@@ -29,7 +29,7 @@ const Header = () => {
     <header className={"flex justify-between py-2 items-center relative z-50"}>
       <div className={"flex gap-6"}>
         <Link href="/" className={"flex flex-row items-center"}>
-          <Image src={"/images/logo.png"} alt={"logo"} width={55} height={55} />
+          <img src={"/images/logo.png"} alt={"logo"} width={55} height={55} />
           <h1 className={"text-2xl font-semibold text-white"}>Strimz</h1>
         </Link>
         <ul className={"flex gap-8 items-center flex-row"}>

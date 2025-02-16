@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import LocalFont from "next/font/local"
 const poppinsSans = LocalFont({

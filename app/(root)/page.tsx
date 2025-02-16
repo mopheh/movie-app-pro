@@ -1,6 +1,8 @@
 import React from "react";
+import dynamic from "next/dynamic";
 import Overview from "@/components/Overview";
-import Popular from "@/components/Popular";
+const Popular = dynamic(() => import("@/components/Popular"));
+
 import Trending from "@/components/Trending";
 
 const Page = () => {
