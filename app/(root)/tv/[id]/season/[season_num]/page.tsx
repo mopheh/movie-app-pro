@@ -12,6 +12,7 @@ import Casts from "@/components/Casts";
 import Head from "next/head";
 import type { Metadata } from "next";
 import Recommendation from "@/components/Recommendation";
+import Episode from "@/components/Episode";
 
 type genre = {
   id: number;
@@ -34,7 +35,7 @@ interface Movie {
   backdrop_path: string;
   belongs_to_collection: collection;
   runtime: number;
-  release_date: string;
+  air_date: string;
   overview: string;
   vote_average: number;
   casts: [];
@@ -50,10 +51,10 @@ type MovieData = {
 };
 const Page = () => {
   const { id: movieId } = useParams();
+  const { season_num: season } = useParams();
   const [movie, setMovie] = useState<Movie | null>(null);
   const router = useRouter();
   const [showVideo, setShowVideo] = useState<boolean>(false);
-  const [collections, setCollections] = useState<Movie[]>([]);
   const [trailer, setTrailer] = useState<string | null>();
   const [isMuted, setIsMuted] = useState<boolean>(true);
 
@@ -63,7 +64,7 @@ const Page = () => {
   const getMovieDetails = async () => {
     try {
       const movieDetails = await fetch(
-        `/api/movies/details?id=${movieId}&type=movie`,
+        `/api/tv/season?id=${movieId}&season=${season}`,
       );
 
       if (!movieDetails.ok) {
@@ -74,14 +75,6 @@ const Page = () => {
       setMovie(movieData);
       console.log(movieData);
 
-      if (movieData.belongs_to_collection) {
-        const collectionDetails = await fetch(
-          `/api/movies/collection?id=${movieData.belongs_to_collection.id}`,
-        );
-        const data = await collectionDetails.json();
-        console.log(data);
-        setCollections(data.parts);
-      }
       await fetchTrailer(movieData.videos);
     } catch (error) {
       console.error(error);
@@ -202,7 +195,32 @@ const Page = () => {
                     {isMuted ? <VolumeX size={24} /> : <Volume2 size={24} />}
                   </button>
                 )}
-                <Info movie={movie} />
+                <div
+                  className={
+                    "flex flex-col mt-3 font-poppins pr-7 gap-3 xs:pr-12 md:pr-20"
+                  }
+                >
+                  <div
+                    className={"flex gap-4 text-sm items-center  text-white"}
+                  >
+                    <div>Series</div>
+                    <div>{movie.name}</div>
+                    <div>{movie.air_date}</div>
+                    <div className={"flex gap-1 items-center"}>
+                      <Image
+                        src={"/icons/star.svg"}
+                        alt={"rating star"}
+                        width={20}
+                        height={20}
+                      />
+                      <span className={"text-emerald-400"}>
+                        {movie.vote_average.toFixed(1)}{" "}
+                        <span className={"text-white"}>/ 10</span>
+                      </span>
+                    </div>
+                  </div>
+                  <div className={"text-white text-sm"}>{movie.overview}</div>
+                </div>
               </div>
             </>
           ) : (
@@ -210,31 +228,7 @@ const Page = () => {
           )}
         </div>
         <div className={"w-full px-7 xs:px-12 md:px-20"}>
-          <div className={"flex w-full"}>
-            <div className={"w-[70%]"}>
-              <Recommendation id={movieId} type={"movie"} />
-            </div>
-            <div className={"w-[30%]"}>
-              <h2 className={"font-bold text-white font-lato"}>
-                Collections ({`${collections.length}`})
-              </h2>
-              <div className={"flex flex-wrap gap-2"}>
-                {collections.length > 0 &&
-                  collections.map((collection) => (
-                    <img
-                      key={collection.id}
-                      src={`https://image.tmdb.org/t/p/original/${collection?.poster_path}`}
-                      alt={collection.name || collection.title}
-                      className="cursor-pointer"
-                      onClick={() => router.push(`/movie/${collection.id}`)}
-                      width={200}
-                      height={300}
-                    />
-                  ))}
-              </div>
-            </div>
-          </div>
-          <Casts movie={movie} />
+          <Episode movie={movie} />
         </div>
       </div>
     </>

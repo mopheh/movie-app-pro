@@ -69,7 +69,7 @@ const Header = () => {
             AO
           </div>
           <h3 className={"font-nunito-sans  text-white"}>Adejare</h3>
-          <Image
+          <img
             src={"/icons/logout.png"}
             alt={"logout"}
             width={22}

@@ -48,12 +48,7 @@ const Overview = () => {
 
   const getMovies = async () => {
     try {
-      const list = ["trending", "popular"];
-      const choice = list[Math.floor(Math.random() * 2)];
-      const movies =
-        choice === "trending"
-          ? await fetch("/api/movies/trending")
-          : await fetch("/api/movies/trending");
+      const movies = await fetch("/api/overview");
 
       if (!movies.ok) {
         throw new Error(`HTTP error! Status: ${movies.status}`);
@@ -64,10 +59,23 @@ const Overview = () => {
       const randNum = Math.floor(Math.random() * data.results.length);
 
       const movieId = data.results[randNum]?.id;
-      setMediaType(data.results[randNum]?.media_type || "movie");
+      setMediaType(
+        data.results[randNum]?.first_air_date
+          ? "tv"
+          : data.results[randNum]?.release_date
+            ? "movie"
+            : "tv",
+      );
       console.log(movieId);
+      console.log(data.results);
       const movieDetails = await fetch(
-        `/api/movies/details?id=${movieId}&type=${data.results[randNum]?.media_type || "movie"}`,
+        `/api/movies/details?id=${movieId}&type=${
+          data.results[randNum]?.first_air_date
+            ? "tv"
+            : data.results[randNum]?.release_date
+              ? "movie"
+              : "tv"
+        }`,
       );
       if (!movieDetails.ok) {
         throw new Error(`HTTP error! Status: ${movieDetails.status}`);

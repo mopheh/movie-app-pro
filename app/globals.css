@@ -8,7 +8,7 @@
     --radius: 0.5rem;
   }
   .count {
-    -webkit-text-stroke: 2px gray;
+    -webkit-text-stroke: 1px white;
   }
   .hide-scrollbar::-webkit-scrollbar {
     width: 0px;

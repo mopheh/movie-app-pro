@@ -53,7 +53,6 @@ const Page = () => {
   const [movie, setMovie] = useState<Movie | null>(null);
   const router = useRouter();
   const [showVideo, setShowVideo] = useState<boolean>(false);
-  const [collections, setCollections] = useState<Movie[]>([]);
   const [trailer, setTrailer] = useState<string | null>();
   const [isMuted, setIsMuted] = useState<boolean>(true);
 
@@ -63,7 +62,7 @@ const Page = () => {
   const getMovieDetails = async () => {
     try {
       const movieDetails = await fetch(
-        `/api/movies/details?id=${movieId}&type=movie`,
+        `/api/movies/details?id=${movieId}&type=tv`,
       );
 
       if (!movieDetails.ok) {
@@ -74,14 +73,6 @@ const Page = () => {
       setMovie(movieData);
       console.log(movieData);
 
-      if (movieData.belongs_to_collection) {
-        const collectionDetails = await fetch(
-          `/api/movies/collection?id=${movieData.belongs_to_collection.id}`,
-        );
-        const data = await collectionDetails.json();
-        console.log(data);
-        setCollections(data.parts);
-      }
       await fetchTrailer(movieData.videos);
     } catch (error) {
       console.error(error);
@@ -210,31 +201,33 @@ const Page = () => {
           )}
         </div>
         <div className={"w-full px-7 xs:px-12 md:px-20"}>
-          <div className={"flex w-full"}>
-            <div className={"w-[70%]"}>
-              <Recommendation id={movieId} type={"movie"} />
+          <div className={"flex w-full gap-4"}>
+            <div className={"w-[60%]"}>
+              <Recommendation id={movieId} type={"tv"} />
             </div>
-            <div className={"w-[30%]"}>
+            <div className={"w-[40%] flex flex-col gap-3"}>
               <h2 className={"font-bold text-white font-lato"}>
-                Collections ({`${collections.length}`})
+                Seasons ({`${movie?.seasons.length || 0}`})
               </h2>
               <div className={"flex flex-wrap gap-2"}>
-                {collections.length > 0 &&
-                  collections.map((collection) => (
-                    <img
-                      key={collection.id}
-                      src={`https://image.tmdb.org/t/p/original/${collection?.poster_path}`}
-                      alt={collection.name || collection.title}
-                      className="cursor-pointer"
-                      onClick={() => router.push(`/movie/${collection.id}`)}
-                      width={200}
-                      height={300}
-                    />
-                  ))}
+                {movie?.seasons.map((collection) => (
+                  <img
+                    key={collection.id}
+                    src={`https://image.tmdb.org/t/p/original/${collection?.poster_path}`}
+                    alt={collection.name || collection.title}
+                    className="cursor-pointer"
+                    onClick={() =>
+                      router.push(
+                        `/tv/${movieId}/season/${collection.season_number}`,
+                      )
+                    }
+                    width={200}
+                    height={300}
+                  />
+                ))}
               </div>
             </div>
           </div>
-          <Casts movie={movie} />
         </div>
       </div>
     </>

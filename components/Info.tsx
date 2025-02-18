@@ -28,12 +28,16 @@ const Info = ({ movie }: Movie) => {
     <div className={"flex mt-3 font-poppins pr-7 gap-3 xs:pr-12 md:pr-20"}>
       <div className={"flex flex-col flex-auto w-[70%] gap-4 "}>
         <div className={"flex gap-4 text-xs items-center  text-white"}>
-          <div>Movie</div>
-          <div>{movie.release_date}</div>
+          <div>{movie.first_air_date ? "Series" : "Movie"}</div>
+          <div>{movie.release_date ?? movie.first_air_date}</div>
           <div>
-            {movie.runtime < 60
-              ? `${movie.runtime}mins`
-              : `${Math.floor(movie.runtime / 60)}h  ${movie.runtime % 60}m`}
+            {movie.last_episode_to_air
+              ? movie.last_episode_to_air.runtime < 60
+                ? `${movie.last_episode_to_air.runtime}mins`
+                : `${Math.floor(movie.last_episode_to_air.runtime / 60)}h  ${movie.last_episode_to_air.runtime % 60}m`
+              : movie.runtime < 60
+                ? `${movie.runtime}mins`
+                : `${Math.floor(movie.runtime / 60)}h  ${movie.runtime % 60}m`}
           </div>
           <div className={"flex gap-1 items-center"}>
             <Image

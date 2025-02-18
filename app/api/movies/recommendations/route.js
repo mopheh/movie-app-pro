@@ -1,8 +1,9 @@
 export const GET = async (req) => {
   let id = new URLSearchParams(new URL(req.url).searchParams).get("id");
+  let type = new URLSearchParams(new URL(req.url).searchParams).get("type");
   try {
     const response = await fetch(
-      `https://api.themoviedb.org/3/movie/${id}/recommendations?api_key=235ba309beb6b48e95dc065bc6ac50cf&language=en-US&page=1`,
+      `https://api.themoviedb.org/3/${type}/${id}/recommendations?api_key=235ba309beb6b48e95dc065bc6ac50cf&language=en-US&page=1`,
     );
 
     if (!response.ok) {
