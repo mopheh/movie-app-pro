@@ -1,7 +1,7 @@
 export const GET = async () => {
   try {
     const response = await fetch(
-      `https://api.themoviedb.org/3/movie/upcoming?api_key=235ba309beb6b48e95dc065bc6ac50cf&append_to_response=videos,images,casts`,
+      `https://api.themoviedb.org/3/movie/now_playing?api_key=235ba309beb6b48e95dc065bc6ac50cf&append_to_response=videos,images,casts`,
     );
 
     if (!response.ok) {

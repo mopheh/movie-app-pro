@@ -31,10 +31,10 @@ const Info = ({ movie }: Movie) => {
           <div>{movie.first_air_date ? "Series" : "Movie"}</div>
           <div>{movie.release_date ?? movie.first_air_date}</div>
           <div>
-            {movie.last_episode_to_air
-              ? movie.last_episode_to_air.runtime < 60
-                ? `${movie.last_episode_to_air.runtime}mins`
-                : `${Math.floor(movie.last_episode_to_air.runtime / 60)}h  ${movie.last_episode_to_air.runtime % 60}m`
+            {movie.next_episode_to_air
+              ? movie.next_episode_to_air.runtime < 60
+                ? `${movie.next_episode_to_air.runtime}mins`
+                : `${Math.floor(movie.next_episode_to_air.runtime / 60)}h  ${movie.next_episode_to_air.runtime % 60}m`
               : movie.runtime < 60
                 ? `${movie.runtime}mins`
                 : `${Math.floor(movie.runtime / 60)}h  ${movie.runtime % 60}m`}

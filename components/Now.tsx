@@ -1,12 +1,13 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { InfiniteMovingCards } from "@/components/ui/infinite-moving-cards";
+import Upcoming from "@/components/Upcoming";
 
 export function Now() {
   const [movie, setMovie] = useState<[]>([]);
   const getMovies = async () => {
     try {
-      const movies = await fetch("/api/movies/upcoming");
+      const movies = await fetch("/api/movies/showing");
 
       if (!movies.ok) {
         throw new Error(`HTTP error! Status: ${movies.status}`);
@@ -42,9 +43,19 @@ export function Now() {
   }, []);
 
   return (
-    <div className="h-[40rem] rounded-md flex flex-col antialiased  bg-grid-white/[0.05] items-center justify-center relative overflow-hidden">
-      {<InfiniteMovingCards items={movie} direction="right" speed="slow" />}
-    </div>
+    <>
+      <div className="h-[40rem] rounded-md flex flex-col antialiased  bg-grid-white/[0.05] items-center justify-center relative overflow-hidden">
+        <h1
+          className={
+            "font-poppins uppercase font-bold text-lg absolute left-14 tracking-tighter text-white top-20"
+          }
+        >
+          Showing Now
+        </h1>
+        {<InfiniteMovingCards items={movie} direction="right" speed="slow" />}
+      </div>
+      <Upcoming />
+    </>
   );
 }
 

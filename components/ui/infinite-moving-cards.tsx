@@ -91,16 +91,33 @@ export const InfiniteMovingCards = ({
         {items &&
           items.map((item, idx) => (
             <li
-              className="w-[350px] max-w-full relative  bg-cover rounded-2xl border border-b-0 flex-shrink-0 border-slate-700 px-8 py-6 md:w-[700px]"
+              className="w-[500px] max-w-full relative h-[386px]  bg-cover rounded-2xl border border-b-0 flex-shrink-0 border-slate-700 px-8 py-6 md:w-[700px]"
               style={{
                 backgroundImage: `url(https://image.tmdb.org/t/p/original/${item?.backdrop_path})`,
               }}
               key={item?.title || item?.name}
             >
               <div className="absolute z-20 inset-0 bg-black opacity-40"></div>
-              <div className={"flex flex-col gap-4 h-full"}>
+              <div
+                className={
+                  "flex flex-col justify-items-center justify-around h-full"
+                }
+              >
                 <h1 className="relative z-20 text-4xl leading-[1.6] text-white font-anton font-normal">
-                  {item?.title || item?.name}
+                  <img
+                    src={
+                      item?.images?.logos?.find(
+                        (logo) => logo.iso_639_1 === "en",
+                      )?.file_path &&
+                      `https://image.tmdb.org/t/p/original/${
+                        item.images.logos.find(
+                          (logo) => logo.iso_639_1 === "en",
+                        ).file_path
+                      }`
+                    }
+                    alt={item?.title || item?.name}
+                    width={"40%"}
+                  />
                 </h1>
                 <span className="relative z-20 text-sm leading-[1.6] text-gray-50 font-poppins font-normal">
                   <div className={"flex gap-5 my-2"}>
@@ -142,9 +159,9 @@ export const InfiniteMovingCards = ({
                     <Image
                       src={"/icons/circle-info-solid.svg"}
                       alt={"info"}
-                      width={20}
+                      width={15}
                       className={"text-white"}
-                      height={20}
+                      height={15}
                     />
                     More Info
                   </Button>
@@ -156,9 +173,9 @@ export const InfiniteMovingCards = ({
                     <Image
                       src={"/icons/play-solid.svg"}
                       alt={"info"}
-                      width={20}
+                      width={15}
                       className={"text-white"}
-                      height={20}
+                      height={15}
                     />
                     Watch Trailer
                   </Button>
