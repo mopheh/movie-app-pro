@@ -2,11 +2,15 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { BookmarkIcon } from "lucide-react";
-import SideContent from "@/components/SideContent";
 
-const Upcoming = () => {
+const Upcoming = ({
+  setId,
+  setShowTrailer,
+}: {
+  setId?: (id: number) => void;
+  setShowTrailer?: boolean;
+}) => {
   const [movie, setMovie] = useState<[]>([]);
-  const [showTrailer, setShowTrailer] = useState(false);
   const getMovies = async () => {
     try {
       const movies = await fetch("/api/movies/upcoming");
@@ -43,17 +47,7 @@ const Upcoming = () => {
   useEffect(() => {
     getMovies();
   }, []);
-  useEffect(() => {
-    if (showTrailer) {
-      document.body.classList.add("overflow-hidden");
-    } else {
-      document.body.classList.remove("overflow-hidden");
-    }
 
-    return () => {
-      document.body.classList.remove("overflow-hidden");
-    };
-  }, [showTrailer]);
   return (
     <div className={"px-7 xs:px-12 md:px-20 flex flex-col gap-3"}>
       <h1
@@ -74,8 +68,8 @@ const Upcoming = () => {
             <Image
               src={`https://image.tmdb.org/t/p/original/${item?.poster_path}`}
               alt={item?.name || item?.title}
-              width={200}
-              height={300}
+              width={150}
+              height={226}
             />
             <div className={"flex flex-col gap-3 p-5"}>
               <div className={"flex gap-2 items-center"}>
@@ -110,9 +104,12 @@ const Upcoming = () => {
               <div className={"flex items-center gap-3"}>
                 <Button
                   className={
-                    "bg-light-300 text-dark-100 p-3 font-nunito-sans font-bold text-xs uppercase tracking-tight hover:bg-light-400 "
+                    "bg-light-300 text-dark-100 cursor-pointer p-3 font-nunito-sans font-bold text-xs uppercase tracking-tight hover:bg-light-400 "
                   }
-                  onClick={() => setShowTrailer(!showTrailer)}
+                  onClick={() => {
+                    setId(item.id);
+                    setShowTrailer(true);
+                  }}
                 >
                   <Image
                     src={"/icons/play-solid.svg"}
@@ -125,7 +122,7 @@ const Upcoming = () => {
                 </Button>
                 <Button
                   className={
-                    "rounded-full w-10 h-10 hover:bg-dark-400  bg-transparent text-white"
+                    "rounded-full w-10 h-10 cursor-pointer hover:bg-dark-400  bg-transparent text-white"
                   }
                 >
                   <BookmarkIcon />
@@ -135,7 +132,6 @@ const Upcoming = () => {
           </div>
         ))}
       </div>
-      {showTrailer && <SideContent />}
     </div>
   );
 };

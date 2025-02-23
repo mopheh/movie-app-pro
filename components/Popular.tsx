@@ -1,8 +1,11 @@
-import React, { Suspense } from "react";
-import Skeleton from "@/components/Skeleton";
+import React from "react";
 import PopularList from "@/components/PopularList";
 
-const Popular = () => {
+interface PopularProps {
+  type?: string;
+}
+
+const Popular = ({ type }: PopularProps) => {
   return (
     <div className={"flex flex-col gap-3 my-5 relative"}>
       <h1
@@ -12,7 +15,7 @@ const Popular = () => {
       >
         New & Popular
       </h1>
-      <PopularList />
+      <PopularList type={type} />
     </div>
   );
 };

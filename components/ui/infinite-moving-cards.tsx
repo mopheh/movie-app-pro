@@ -11,16 +11,22 @@ export const InfiniteMovingCards = ({
   speed = "fast",
   pauseOnHover = true,
   className,
+  setId,
+  setShowTrailer,
 }: {
   items: {
-    quote: string;
+    overview: string;
     name: string;
     title: string;
+    id: number;
+    runtime: number;
   }[];
   direction?: "left" | "right";
   speed?: "fast" | "normal" | "slow";
   pauseOnHover?: boolean;
   className?: string;
+  setId?: (id: number) => void;
+  setShowTrailer?: boolean;
 }) => {
   const containerRef = React.useRef<HTMLDivElement>(null);
   const scrollerRef = React.useRef<HTMLUListElement>(null);
@@ -169,6 +175,10 @@ export const InfiniteMovingCards = ({
                     className={
                       "bg-light-300 text-dark-100 p-6 font-nunito-sans font-bold text-sm uppercase tracking-tight hover:bg-light-400 "
                     }
+                    onClick={() => {
+                      setId(item?.id);
+                      setShowTrailer(true);
+                    }}
                   >
                     <Image
                       src={"/icons/play-solid.svg"}

@@ -1,6 +1,26 @@
 import React, { useEffect, useState } from "react";
 import Skeleton from "@/components/Skeleton";
 import { useRouter } from "next/navigation";
+interface Movie {
+    id: number;
+    title: string;
+    name: string;
+    first_air_date: string;
+    poster_path: string;
+    last_episode_to_air: { runtime: number };
+    next_episode_to_air: { runtime: number };
+    backdrop_path: string;
+    runtime: number;
+    release_date: string;
+    production_companies: [
+      {
+        name: string;
+        id: number;
+      }
+    ]
+    overview: string;
+    vote_average: number;
+  };
 
 const Recommendation = ({ id, type }: { id: number; type: string }) => {
   const [movies, setMovies] = useState();
@@ -32,13 +52,17 @@ const Recommendation = ({ id, type }: { id: number; type: string }) => {
         {movies
           ? movies
               .slice(0, 10)
-              .map((movie) => (
+              .map((movie: Movie) => (
                 <img
                   key={movie.id}
                   src={`https://image.tmdb.org/t/p/original/${movie?.poster_path}`}
                   alt={movie.name || movie.title}
                   className="cursor-pointer"
-                  onClick={() => router.push(`/${type}/${movie.id}`)}
+                  onClick={() =>
+                    router.push(
+                      `/${type === "tv" ? "series" : type}/${movie.id}`,
+                    )
+                  }
                   width={200}
                   height={300}
                 />

@@ -1,4 +1,5 @@
-export const GET = async () => {
+export const GET = async (req) => {
+  const type = new URLSearchParams(new URL(req.url).searchParams).get("type");
   const links = [
     "https://api.themoviedb.org/3/tv/top_rated?api_key=235ba309beb6b48e95dc065bc6ac50cf&append_to_response=videos,images,casts",
     "https://api.themoviedb.org/3/movie/popular?api_key=235ba309beb6b48e95dc065bc6ac50cf",
@@ -7,7 +8,13 @@ export const GET = async () => {
     "https://api.themoviedb.org/3/trending/tv/day?api_key=235ba309beb6b48e95dc065bc6ac50cf",
     "https://api.themoviedb.org/3/movie/upcoming?api_key=235ba309beb6b48e95dc065bc6ac50cf&append_to_response=videos,images,casts",
   ];
-  const link = links[Math.floor(Math.random() * links.length)];
+  console.log(type);
+  const link =
+    type === "tv"
+      ? "https://api.themoviedb.org/3/trending/tv/day?api_key=235ba309beb6b48e95dc065bc6ac50cf"
+      : type === "movie"
+        ? "https://api.themoviedb.org/3/trending/movie/day?api_key=235ba309beb6b48e95dc065bc6ac50cf"
+        : links[Math.floor(Math.random() * links.length)];
   try {
     const response = await fetch(link);
 

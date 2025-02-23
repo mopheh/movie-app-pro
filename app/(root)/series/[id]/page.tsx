@@ -1,4 +1,5 @@
 "use client";
+import type { Metadata } from "next";
 import React, { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 
@@ -6,8 +7,11 @@ import { PlusIcon, Volume2, VolumeX } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import ReactPlayer from "react-player";
 import Image from "next/image";
+import Info from "@/components/Info";
+import Casts from "@/components/Casts";
 import Head from "next/head";
-import Episode from "@/components/Episode";
+import type { Metadata } from "next";
+import Recommendation from "@/components/Recommendation";
 
 type genre = {
   id: number;
@@ -26,15 +30,24 @@ interface Movie {
   name: string;
   poster_path: string;
   genres: [genre];
+  first_air_date: string;
   spoken_languages: [spoken_language];
-  backdrop_path: string;
   belongs_to_collection: collection;
+  last_episode_to_air: { runtime: number };
+  next_episode_to_air: { runtime: number };
+  backdrop_path: string;
   runtime: number;
-  air_date: string;
+  release_date: string;
+  production_companies: [
+    {
+      name: string;
+      id: number;
+    }
+  ]
   overview: string;
   vote_average: number;
-  casts: [];
-}
+};
+
 type MovieVideo = {
   key: string;
   site: string;
@@ -46,7 +59,6 @@ type MovieData = {
 };
 const Page = () => {
   const { id: movieId } = useParams();
-  const { season_num: season } = useParams();
   const [movie, setMovie] = useState<Movie | null>(null);
   const router = useRouter();
   const [showVideo, setShowVideo] = useState<boolean>(false);
@@ -59,7 +71,7 @@ const Page = () => {
   const getMovieDetails = async () => {
     try {
       const movieDetails = await fetch(
-        `/api/tv/season?id=${movieId}&season=${season}`,
+        `/api/movies/details?id=${movieId}&type=tv`,
       );
 
       if (!movieDetails.ok) {
@@ -190,32 +202,7 @@ const Page = () => {
                     {isMuted ? <VolumeX size={24} /> : <Volume2 size={24} />}
                   </button>
                 )}
-                <div
-                  className={
-                    "flex flex-col mt-3 font-poppins pr-7 gap-3 xs:pr-12 md:pr-20"
-                  }
-                >
-                  <div
-                    className={"flex gap-4 text-sm items-center  text-white"}
-                  >
-                    <div>Series</div>
-                    <div>{movie.name}</div>
-                    <div>{movie.air_date}</div>
-                    <div className={"flex gap-1 items-center"}>
-                      <Image
-                        src={"/icons/star.svg"}
-                        alt={"rating star"}
-                        width={20}
-                        height={20}
-                      />
-                      <span className={"text-emerald-400"}>
-                        {movie.vote_average.toFixed(1)}{" "}
-                        <span className={"text-white"}>/ 10</span>
-                      </span>
-                    </div>
-                  </div>
-                  <div className={"text-white text-sm"}>{movie.overview}</div>
-                </div>
+                <Info movie={movie} />
               </div>
             </>
           ) : (
@@ -223,7 +210,33 @@ const Page = () => {
           )}
         </div>
         <div className={"w-full px-7 xs:px-12 md:px-20"}>
-          <Episode movie={movie} />
+          <div className={"flex w-full gap-4"}>
+            <div className={"w-[60%]"}>
+              <Recommendation id={movieId} type={"tv"} />
+            </div>
+            <div className={"w-[40%] flex flex-col gap-3"}>
+              <h2 className={"font-bold text-white font-lato"}>
+                Seasons ({`${movie?.seasons.length || 0}`})
+              </h2>
+              <div className={"flex flex-wrap gap-2"}>
+                {movie?.seasons.map((collection) => (
+                  <img
+                    key={collection.id}
+                    src={`https://image.tmdb.org/t/p/original/${collection?.poster_path}`}
+                    alt={collection.name || collection.title}
+                    className="cursor-pointer"
+                    onClick={() =>
+                      router.push(
+                        `/series/${movieId}/season/${collection.season_number}`,
+                      )
+                    }
+                    width={200}
+                    height={300}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </>

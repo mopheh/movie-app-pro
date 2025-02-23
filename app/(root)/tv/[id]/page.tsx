@@ -218,7 +218,7 @@ const Page = () => {
                     className="cursor-pointer"
                     onClick={() =>
                       router.push(
-                        `/tv/${movieId}/season/${collection.season_number}`,
+                        `/series/${movieId}/season/${collection.season_number}`,
                       )
                     }
                     width={200}

@@ -11,10 +11,12 @@ const ReactPlayer = dynamic(() => import("react-player/youtube"), {
 import { motion, AnimatePresence } from "framer-motion";
 import { router } from "next/client";
 import { useRouter } from "next/navigation";
+
 type genre = {
   id: number;
   name: string;
 };
+
 interface Movie {
   id: string;
   title: string;
@@ -25,6 +27,7 @@ interface Movie {
   overview: string;
   vote_average: number;
 }
+
 type MovieVideo = {
   key: string;
   site: string;
@@ -34,7 +37,12 @@ type MovieVideo = {
 type MovieData = {
   results: MovieVideo[];
 };
-const Overview = () => {
+
+interface OverviewProps {
+  type?: string;
+}
+
+const Overview = ({ type }: OverviewProps) => {
   const [movie, setMovie] = useState<Movie | null>(null);
   const [showVideo, setShowVideo] = useState<boolean>(false);
   const [trailer, setTrailer] = useState<string>();
@@ -48,7 +56,7 @@ const Overview = () => {
 
   const getMovies = async () => {
     try {
-      const movies = await fetch("/api/overview");
+      const movies = await fetch(`/api/overview?type=${type}`);
 
       if (!movies.ok) {
         throw new Error(`HTTP error! Status: ${movies.status}`);
@@ -85,7 +93,9 @@ const Overview = () => {
       const movieData = detailsText.trim() ? JSON.parse(detailsText) : {};
       setMovie(movieData);
       setEnglishLogo(
-        movieData?.images.logos.find((logo) => logo.iso_639_1 === "en"),
+        movieData?.images.logos.find(
+          (logo: { iso_639_1: string }) => logo.iso_639_1 === "en",
+        ),
       );
       await fetchTrailer(movieData.videos);
     } catch (error) {
@@ -139,9 +149,6 @@ const Overview = () => {
   return movie ? (
     <div
       className={"w-full flex items-center h-[700px] px-7 xs:px-12 md:px-20"}
-      // style={{
-      //   backgroundImage: `url(https://image.tmdb.org/t/p/original/${movie?.backdrop_path})`,
-      // }}
     >
       {!showVideo || timeoutReached || !trailer ? (
         <div
@@ -162,7 +169,7 @@ const Overview = () => {
             loop={false}
             width="100%"
             height="100%"
-            className="absolute inset-0"
+            className="absolute inset-0 object-cover"
             onReady={() => {
               console.log("✅ Video is ready");
               setShowVideo(true);

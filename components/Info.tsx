@@ -9,15 +9,24 @@ type spoken_language = {
 };
 interface Movie {
   movie: {
-    id: string;
+    id: number;
     title: string;
     name: string;
+    first_air_date: string;
     poster_path: string;
     genres: [genre];
     spoken_languages: [spoken_language];
+    last_episode_to_air: { runtime: number };
+    next_episode_to_air: { runtime: number };
     backdrop_path: string;
     runtime: number;
     release_date: string;
+    production_companies: [
+      {
+        name: string;
+        id: number;
+      },
+    ];
     overview: string;
     vote_average: number;
   };
@@ -35,9 +44,13 @@ const Info = ({ movie }: Movie) => {
               ? movie.next_episode_to_air.runtime < 60
                 ? `${movie.next_episode_to_air.runtime}mins`
                 : `${Math.floor(movie.next_episode_to_air.runtime / 60)}h  ${movie.next_episode_to_air.runtime % 60}m`
-              : movie.runtime < 60
-                ? `${movie.runtime}mins`
-                : `${Math.floor(movie.runtime / 60)}h  ${movie.runtime % 60}m`}
+              : movie.last_episode_to_air
+                ? movie.last_episode_to_air.runtime < 60
+                  ? `${movie.last_episode_to_air.runtime}mins`
+                  : `${Math.floor(movie.last_episode_to_air.runtime / 60)}h  ${movie.last_episode_to_air.runtime % 60}m`
+                : movie.runtime < 60
+                  ? `${movie.runtime}mins`
+                  : `${Math.floor(movie.runtime / 60)}h  ${movie.runtime % 60}m`}
           </div>
           <div className={"flex gap-1 items-center"}>
             <Image

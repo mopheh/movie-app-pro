@@ -1,22 +1,24 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import {
-  LucideArrowBigLeft,
-  LucideMoveLeft,
-  LucideMoveRight,
-} from "lucide-react";
+import { LucideMoveLeft, LucideMoveRight } from "lucide-react";
 import Skeleton from "@/components/Skeleton";
+
 interface Movie {
   id: string;
   title: string;
   poster_path: string;
   media_type: string;
 }
-const Trending = () => {
+
+interface TrendingProps {
+  type?: string;
+}
+
+const Trending = ({ type }: TrendingProps) => {
   const [movies, setMovies] = useState<Movie[] | null>(null);
   const getMovies = async () => {
-    const movies = await fetch("/api/movies/trending");
+    const movies = await fetch(`/api/movies/trending?type=${type}`);
     const data = await movies.json();
     console.log(data);
     setMovies(data.results);
@@ -83,7 +85,7 @@ const Trending = () => {
       </div>
       <button
         onClick={() => scroll(300)}
-        className="absolute right-0 top-1/2 -translate-y-1/2 h-[300px] bg-white bg-opacity-10 text-white p-2"
+        className="absolute right-0 top-1/2 -translate-y-1/2 h-[300px] bg-dark bg-opacity-10 text-white p-2"
       >
         <LucideMoveRight />
       </button>

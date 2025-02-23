@@ -27,7 +27,7 @@ const Episode = ({ movie }) => {
               src={`https://image.tmdb.org/t/p/original/${collection?.still_path}`}
               alt={collection.name}
               className="cursor-pointer"
-              // onClick={() => router.push(`/tv/${collection.id}`)}
+              // onClick={() => router.push(`/series/${collection.id}`)}
               width={200}
             />
             <div className={"flex flex-col gap-3"}>
