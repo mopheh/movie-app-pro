@@ -1,11 +1,18 @@
 "use client";
 import React from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
+import { ArrowRightIcon } from "lucide-react";
+import { useAuth, useUser } from "@clerk/nextjs";
+import Image from "next/image";
 
 const Header = () => {
+  const { user, isSignedIn } = useUser();
+  const { signOut } = useAuth();
+  if (isSignedIn) {
+    console.log(user);
+  }
   const pathname = usePathname();
   const links: { name: string; link: string }[] = [
     {
@@ -18,7 +25,7 @@ const Header = () => {
     },
     {
       name: "Films",
-      link: "/films",
+      link: "/movie",
     },
     {
       name: "New & Popular",
@@ -61,20 +68,36 @@ const Header = () => {
           Showing now
         </Link>
         <div className={"flex gap-3 items-center cursor-pointer"}>
-          <div
-            className={
-              "bg-primary rounded-full font-bebas-neue text-sm w-[32px] h-[32px] text-dark-300 flex items-center justify-center font-light tracking-wide"
-            }
-          >
-            AO
-          </div>
-          <h3 className={"font-nunito-sans  text-white"}>Adejare</h3>
-          <img
-            src={"/icons/logout.png"}
-            alt={"logout"}
-            width={22}
-            height={22}
-          />
+          {isSignedIn ? (
+            <>
+              <div
+                className={
+                  "rounded-full font-bebas-neue text-sm bg-contain w-[40px] h-[40px] text-dark-300 flex items-center justify-center font-light tracking-wide "
+                }
+                style={{ backgroundImage: `url(${user?.imageUrl})` }}
+              />
+              <h3 className={"font-nunito-sans  text-white"}>
+                {" "}
+                {user?.firstName}{" "}
+              </h3>
+              <img
+                src={"/icons/logout.png"}
+                alt={"logout"}
+                width={22}
+                height={22}
+                onClick={() => signOut()}
+              />
+            </>
+          ) : (
+            <Link
+              href="/sign-in"
+              className={
+                " flex items-center gap-2 text-xs font-poppins rounded-full text-center px-5 py-2  text-white bg-black bg-opacity-30 hover:bg-dark-100"
+              }
+            >
+              Log in <ArrowRightIcon />
+            </Link>
+          )}
         </div>
       </div>
     </header>

@@ -1,33 +1,50 @@
 export const GET = async (req) => {
-  const type = new URLSearchParams(new URL(req.url).searchParams).get("type");
-  const links = [
-    "https://api.themoviedb.org/3/tv/top_rated?api_key=235ba309beb6b48e95dc065bc6ac50cf&append_to_response=videos,images,casts",
-    "https://api.themoviedb.org/3/movie/popular?api_key=235ba309beb6b48e95dc065bc6ac50cf",
-    "https://api.themoviedb.org/3/movie/top_rated?api_key=235ba309beb6b48e95dc065bc6ac50cf&append_to_response=videos,images,casts",
-    "https://api.themoviedb.org/3/trending/movie/day?api_key=235ba309beb6b48e95dc065bc6ac50cf",
-    "https://api.themoviedb.org/3/trending/tv/day?api_key=235ba309beb6b48e95dc065bc6ac50cf",
-    "https://api.themoviedb.org/3/movie/upcoming?api_key=235ba309beb6b48e95dc065bc6ac50cf&append_to_response=videos,images,casts",
-  ];
-  console.log(type);
-  const link =
-    type === "tv"
-      ? "https://api.themoviedb.org/3/trending/tv/day?api_key=235ba309beb6b48e95dc065bc6ac50cf"
-      : type === "movie"
-        ? "https://api.themoviedb.org/3/trending/movie/day?api_key=235ba309beb6b48e95dc065bc6ac50cf"
-        : links[Math.floor(Math.random() * links.length)];
-  try {
-    const response = await fetch(link);
+  const type = req.nextUrl?.searchParams.get("type") || null;
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(
-        `Request failed with status ${response.status} ${errorText}`,
-      );
-    }
+  const today = new Date().toISOString().split("T")[0];
+  const fiveYearsAgo = new Date();
+  fiveYearsAgo.setFullYear(fiveYearsAgo.getFullYear() - 10);
+  const formattedFiveYearsAgo = fiveYearsAgo.toISOString().split("T")[0];
+  // Helper function to fetch different pages
+  const fetchPage = async (page, baseLink) => {
+    const response = await fetch(`${baseLink}&page=${page}`);
     const data = await response.json();
-    return new Response(JSON.stringify(data));
-  } catch (e) {
-    console.log(e);
-    throw new Error(e);
+    return data.results || [];
+  };
+
+  const links = [
+    `https://api.themoviedb.org/3/discover/movie?api_key=${process.env.TMDB_API_KEY}&language=en-US&sort_by=popularity.desc&release_date.gte=${formattedFiveYearsAgo}&release_date.lte=${today}&vote_count.gte=400`,
+    `https://api.themoviedb.org/3/movie/popular?api_key=${process.env.TMDB_API_KEY}`,
+    `https://api.themoviedb.org/3/discover/tv?api_key=${process.env.TMDB_API_KEY}&language=en-US&sort_by=popularity.desc&first_air_date.gte=${formattedFiveYearsAgo}&first_air_date.lte=${today}&vote_count.gte=400`,
+    `https://api.themoviedb.org/3/trending/movie/day?api_key=${process.env.TMDB_API_KEY}`,
+    `https://api.themoviedb.org/3/movie/upcoming?api_key=${process.env.TMDB_API_KEY}&append_to_response=videos,images,casts`,
+  ];
+
+  try {
+    let baseLink;
+
+    if (type === "tv") {
+      baseLink = `https://api.themoviedb.org/3/discover/tv?api_key=${process.env.TMDB_API_KEY}&language=en-US&sort_by=popularity.desc&first_air_date.gte=${formattedFiveYearsAgo}&first_air_date.lte=${today}&vote_count.gte=400`;
+    } else if (type === "movie") {
+      baseLink = `https://api.themoviedb.org/3/discover/movie?api_key=${process.env.TMDB_API_KEY}&language=en-US&sort_by=popularity.desc&release_date.gte=${formattedFiveYearsAgo}&release_date.lte=${today}&vote_count.gte=400`;
+    } else {
+      baseLink = links[Math.floor(Math.random() * links.length)];
+    }
+
+    // Fetch two pages from the **same** baseLink
+    const [page1, page2] = await Promise.all([
+      fetchPage(1, baseLink),
+      fetchPage(2, baseLink),
+    ]);
+
+    return new Response(JSON.stringify([...page1, ...page2]), {
+      headers: { "Content-Type": "application/json" },
+    });
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    return new Response(JSON.stringify({ message: "Error fetching data" }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    });
   }
 };

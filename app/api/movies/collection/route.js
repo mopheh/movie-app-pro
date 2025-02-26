@@ -1,20 +1,20 @@
 export const GET = async (req) => {
-  let id = new URLSearchParams(new URL(req.url).searchParams).get("id");
+  let id = new URLSearchParams(new URL(req.url).searchParams).get("id")
   try {
     const response = await fetch(
-      `https://api.themoviedb.org/3/collection/${id}?api_key=235ba309beb6b48e95dc065bc6ac50cf&append_to_response=videos,images,casts`,
-    );
+      `https://api.themoviedb.org/3/collection/${id}?api_key=${process.env.TMDB_API_KEY}&append_to_response=videos,images,casts`
+    )
 
     if (!response.ok) {
-      const errorText = await response.text();
+      const errorText = await response.text()
       throw new Error(
-        `Request failed with status ${response.status} ${errorText}`,
-      );
+        `Request failed with status ${response.status} ${errorText}`
+      )
     }
-    const data = await response.json();
-    return new Response(JSON.stringify(data));
+    const data = await response.json()
+    return new Response(JSON.stringify(data))
   } catch (e) {
-    console.log(e);
-    throw new Error(e);
+    console.log(e)
+    throw new Error(e)
   }
-};
+}

@@ -64,23 +64,23 @@ const Overview = ({ type }: OverviewProps) => {
 
       const text = await movies.text(); // Read as text first
       const data = text.trim() ? JSON.parse(text) : {};
-      const randNum = Math.floor(Math.random() * data.results.length);
+      const randNum = Math.floor(Math.random() * data.length);
 
-      const movieId = data.results[randNum]?.id;
+      const movieId = data[randNum]?.id;
       setMediaType(
-        data.results[randNum]?.first_air_date
+        data[randNum]?.first_air_date
           ? "tv"
-          : data.results[randNum]?.release_date
+          : data[randNum]?.release_date
             ? "movie"
             : "tv",
       );
       console.log(movieId);
-      console.log(data.results);
+      console.log(data);
       const movieDetails = await fetch(
         `/api/movies/details?id=${movieId}&type=${
-          data.results[randNum]?.first_air_date
+          data[randNum]?.first_air_date
             ? "tv"
-            : data.results[randNum]?.release_date
+            : data[randNum]?.release_date
               ? "movie"
               : "tv"
         }`,
