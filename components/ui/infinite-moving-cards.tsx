@@ -104,7 +104,6 @@ export const InfiniteMovingCards = ({
               style={{
                 backgroundImage: `url(https://image.tmdb.org/t/p/original/${item?.backdrop_path})`,
               }}
-              key={item?.title || item?.name}
             >
               <div className="absolute z-20 inset-0 bg-black opacity-40"></div>
               <div

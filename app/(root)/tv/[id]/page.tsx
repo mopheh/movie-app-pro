@@ -78,7 +78,6 @@ const Page = () => {
   }, [movie]);
   const toggleMute = () => {
     if (playerRef.current) {
-      // @ts-ignore
       const internalPlayer = playerRef.current.getInternalPlayer();
       if (isMuted) {
         internalPlayer?.unMute();

@@ -37,7 +37,6 @@ const Upcoming = ({
           return movieDetails.json();
         })
       );
-      // @ts-ignore
       setMovie(movieFound);
     } catch (error) {
       console.error("Error fetching movies:", error);
@@ -67,7 +66,7 @@ const Upcoming = ({
           >
             <Image
               src={
-                `https://image.tmdb.org/t/p/original/${item?.poster_path}` ??
+                  item.poster_path ? `https://image.tmdb.org/t/p/original/${item?.poster_path}` :
                 `data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8z8AHAAMBAQAYj0lcAAAAAElFTkSuQmCC`
               }
               alt={item?.name || item?.title}

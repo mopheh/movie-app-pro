@@ -34,6 +34,16 @@ interface Movie {
   overview: string;
   vote_average: number;
   casts: [];
+  episodes: {
+    id: number;
+    air_date: string;
+    name: string;
+    episode_number: number;
+    still_path: string;
+    overview: string;
+    vote_average: number;
+    runtime: number;
+  }[]
 }
 type MovieVideo = {
   key: string;
@@ -53,7 +63,6 @@ const Page = () => {
   const [trailer, setTrailer] = useState<string | null>();
   const [isMuted, setIsMuted] = useState<boolean>(true);
 
-  // @ts-ignore
   const playerRef = useRef<InstanceType<typeof ReactPlayer> | null>(null);
 
   const getMovieDetails = async () => {
@@ -164,7 +173,7 @@ const Page = () => {
                 ) : (
                   trailer && (
                     <ReactPlayer
-                      ref={(player) => (playerRef.current = player)}
+                      ref={(player: any) => (playerRef.current = player)}
                       url={trailer}
                       playing={true} // ✅ Auto Play
                       muted={isMuted} // ✅ Start Muted

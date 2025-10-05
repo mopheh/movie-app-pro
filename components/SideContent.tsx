@@ -18,7 +18,7 @@ const SideContent = ({ id, onClose }: { id: number; onClose: void }) => {
         <div className="fixed right-0 top-0 w-1/3 flex flex-col gap-3 h-screen bg-gray-800 z-30 shadow-lg">
           <div
             className="absolute top-8 right-8 flex items-center gap-1 text-white text-sm font-poppins cursor-pointer"
-            // @ts-ignore
+
             onClick={onClose}
           >
             <XIcon className="h-6 w-6" /> Close
