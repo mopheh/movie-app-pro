@@ -19,6 +19,8 @@ export const InfiniteMovingCards = ({
     name: string;
     title: string;
     id: number;
+    backdrop_path: string;
+    media_type: string;
     runtime: number;
   }[];
   direction?: "left" | "right";
@@ -97,6 +99,7 @@ export const InfiniteMovingCards = ({
         {items &&
           items.map((item, idx) => (
             <li
+                key={idx}
               className="w-[500px] max-w-full relative h-[386px]  bg-cover rounded-2xl border border-b-0 flex-shrink-0 border-slate-700 px-8 py-6 md:w-[700px]"
               style={{
                 backgroundImage: `url(https://image.tmdb.org/t/p/original/${item?.backdrop_path})`,

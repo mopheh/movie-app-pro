@@ -38,6 +38,7 @@ interface MovieProps {
   casts: {
     cast: cast[];
   };
+  seasons: any[];
 }
 type logo = {
   file_path: string;

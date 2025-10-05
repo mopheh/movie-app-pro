@@ -10,8 +10,7 @@ type episode = {
   vote_average: number;
   runtime: number;
 };
-// @ts-ignore
-const Episode = ({ movie }) => {
+const Episode = ({ movie }: {movie: {episodes: episode[]}}) => {
   return (
     <div className={"w-full flex flex-col gap-4"}>
       <h2 className={"font-bold text-white font-lato"}>

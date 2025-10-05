@@ -1,7 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { InfiniteMovingCards } from "@/components/ui/infinite-moving-cards";
-import Upcoming from "@/components/Upcoming";
 
 export function Now({
   setId,
@@ -37,7 +36,6 @@ export function Now({
           return movieDetails.json();
         }),
       );
-      // @ts-ignore
       setMovie(movieFound);
     } catch (error) {
       console.error("Error fetching movies:", error);

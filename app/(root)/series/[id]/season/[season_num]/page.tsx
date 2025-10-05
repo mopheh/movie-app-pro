@@ -4,10 +4,13 @@ import { Button } from "@/components/ui/button";
 
 import { PlusIcon, Volume2, VolumeX } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
-import ReactPlayer from "react-player";
+const ReactPlayer = dynamic(() => import("react-player/youtube"), {
+  ssr: false,
+});
 import Image from "next/image";
 import Head from "next/head";
 import Episode from "@/components/Episode";
+import dynamic from "next/dynamic";
 
 type genre = {
   id: number;
@@ -53,8 +56,7 @@ const Page = () => {
   const [trailer, setTrailer] = useState<string | null>();
   const [isMuted, setIsMuted] = useState<boolean>(true);
 
-  // @ts-ignore
-  const playerRef = useRef<InstanceType<typeof ReactPlayer> | null>(null);
+  const playerRef = useRef(null);
 
   const getMovieDetails = async () => {
     try {
@@ -100,6 +102,7 @@ const Page = () => {
   }, [movie]);
   const toggleMute = () => {
     if (playerRef.current) {
+      // @ts-expect-error
       const internalPlayer = playerRef.current.getInternalPlayer();
       if (isMuted) {
         internalPlayer?.unMute();
@@ -164,7 +167,7 @@ const Page = () => {
                 ) : (
                   trailer && (
                     <ReactPlayer
-                      ref={(player) => (playerRef.current = player)}
+                      ref={(player:any) => (playerRef.current = player)}
                       url={trailer}
                       playing={true} // ✅ Auto Play
                       muted={isMuted} // ✅ Start Muted

@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import ReactPlayer from "react-player/youtube";
 import { toast } from "sonner";
+import {logo, MovieData, MovieProps, movieVideo} from "..";
 
 export const useMovie = (url: string, page?: string) => {
   const [movie, setMovie] = useState<MovieProps | null>(null);

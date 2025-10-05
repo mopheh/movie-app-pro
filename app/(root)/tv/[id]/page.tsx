@@ -1,44 +1,20 @@
 "use client";
-import type { Metadata } from "next";
 import React, { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 
 import { PlusIcon, Volume2, VolumeX } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
-import ReactPlayer from "react-player";
-import Image from "next/image";
-import Info from "@/components/Info";
-import Casts from "@/components/Casts";
-import Head from "next/head";
-import type { Metadata } from "next";
-import Recommendation from "@/components/Recommendation";
 
-type genre = {
-  id: number;
-  name: string;
-};
-type spoken_language = {
-  english_name: string;
-};
-type collection = {
-  id: number;
-  name: string;
-};
-interface Movie {
-  id: number;
-  title: string;
-  name: string;
-  poster_path: string;
-  genres: [genre];
-  spoken_languages: [spoken_language];
-  backdrop_path: string;
-  belongs_to_collection: collection;
-  runtime: number;
-  release_date: string;
-  overview: string;
-  vote_average: number;
-  casts: [];
-}
+const ReactPlayer = dynamic(() => import("react-player/youtube"), {
+  ssr: false,
+});
+import Info from "@/components/Info";
+import Head from "next/head"
+import Recommendation from "@/components/Recommendation";
+import {MovieProps} from "@/index";
+import dynamic from "next/dynamic";
+
+
 type MovieVideo = {
   key: string;
   site: string;
@@ -50,14 +26,13 @@ type MovieData = {
 };
 const Page = () => {
   const { id: movieId } = useParams();
-  const [movie, setMovie] = useState<Movie | null>(null);
+  const [movie, setMovie] = useState<MovieProps | null>(null);
   const router = useRouter();
   const [showVideo, setShowVideo] = useState<boolean>(false);
   const [trailer, setTrailer] = useState<string | null>();
   const [isMuted, setIsMuted] = useState<boolean>(true);
 
-  // @ts-ignore
-  const playerRef = useRef<InstanceType<typeof ReactPlayer> | null>(null);
+  const playerRef = useRef(null);
 
   const getMovieDetails = async () => {
     try {
@@ -103,6 +78,7 @@ const Page = () => {
   }, [movie]);
   const toggleMute = () => {
     if (playerRef.current) {
+      // @ts-ignore
       const internalPlayer = playerRef.current.getInternalPlayer();
       if (isMuted) {
         internalPlayer?.unMute();
@@ -167,7 +143,7 @@ const Page = () => {
                 ) : (
                   trailer && (
                     <ReactPlayer
-                      ref={(player) => (playerRef.current = player)}
+                      ref={(player:any) => (playerRef.current = player)}
                       url={trailer}
                       playing={true} // ✅ Auto Play
                       muted={isMuted} // ✅ Start Muted

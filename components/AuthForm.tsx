@@ -8,7 +8,7 @@ import {
   useForm,
   UseFormReturn,
 } from "react-hook-form";
-import { z, ZodType } from "zod";
+import {  ZodType } from "zod";
 import {
   Form,
   FormControl,
@@ -41,7 +41,8 @@ const AuthForm = <T extends FieldValues>({
     defaultValues: defaultValues as DefaultValues<T>,
   });
 
-  const handleSubmit: SubmitHandler<T> = (data: any) => {};
+  const handleSubmit: SubmitHandler<T> = (data: any) => {console.log(data)};
+
   return (
     <div className={"flex flex-col w-full gap-4 font-lato"}>
       <h1 className={"text-2xl font-semibold text-white"}>
