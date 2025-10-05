@@ -1,14 +1,14 @@
-"use client";
-import React from "react";
-import AuthForm from "@/components/AuthForm";
-import { signUpSchema } from "@/lib/validate";
+"use client"
+import React from "react"
+import { SignUp } from "@clerk/nextjs"
 
 const Page = () => (
-  <AuthForm
-    type={"SIGN_UP"}
-    schema={signUpSchema}
-    defaultValues={{ fullName: "", email: "", password: "" }}
-    onSubmit={() => {}}
-  />
-);
-export default Page;
+  <main
+    className={
+      "flex h-screen w-full flex-col items-center justify-center gap-10 bg-pattern bg-cover"
+    }
+  >
+    <SignUp />
+  </main>
+)
+export default Page

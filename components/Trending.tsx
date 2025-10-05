@@ -1,33 +1,15 @@
 "use client";
-import React, { useEffect, useRef, useState } from "react";
+import React, { RefObject, useRef } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { LucideMoveLeft, LucideMoveRight } from "lucide-react";
 import Skeleton from "@/components/Skeleton";
-
-interface Movie {
-  id: string;
-  title: string;
-  poster_path: string;
-  media_type: string;
-}
-
-interface TrendingProps {
-  type?: string;
-}
+import useFetch from "@/hooks/useFetch";
 
 const Trending = ({ type }: TrendingProps) => {
-  const [movies, setMovies] = useState<Movie[] | null>(null);
-  const getMovies = async () => {
-    const movies = await fetch(`/api/movies/trending?type=${type}`);
-    const data = await movies.json();
-    console.log(data);
-    setMovies(data.results);
-  };
-
-  useEffect(() => {
-    getMovies();
-  }, []);
-  const scrollRef = useRef<null>(null);
+  const { results: movies } = useFetch(`/api/movies/trending?type=${type}`);
+  console.log(movies);
+  const scrollRef: RefObject<null> = useRef<null>(null);
 
   const scroll = (offset: number) => {
     if (scrollRef.current) {
@@ -53,8 +35,8 @@ const Trending = ({ type }: TrendingProps) => {
         ref={scrollRef}
         className={"flex overflow-x-auto scroll-smooth hide-scrollbar "}
       >
-        {movies
-          ? movies.slice(0, 10).map((movie, index) => (
+        {movies?.length
+          ? movies.slice(0, 10).map((movie: MovieProps, index) => (
               <div
                 key={movie.id}
                 className={
@@ -69,12 +51,18 @@ const Trending = ({ type }: TrendingProps) => {
                   {index + 1}
                 </div>
                 <Link href={`/${movie.media_type}/${movie.id}`}>
-                  <img
-                    src={`https://image.tmdb.org/t/p/original/${movie.poster_path}`}
+                  <Image
+                    src={
+                      movie.poster_path
+                        ? `https://image.tmdb.org/t/p/original/${movie.poster_path}`
+                        : `data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8z8AHAAMBAQAYj0lcAAAAAElFTkSuQmCC`
+                    }
                     alt={"movie"}
                     className={"cursor-pointer relative "}
                     width={150}
                     height={226}
+                    placeholder="blur"
+                    blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8z8AHAAMBAQAYj0lcAAAAAElFTkSuQmCC"
                   />
                 </Link>
               </div>
@@ -85,7 +73,7 @@ const Trending = ({ type }: TrendingProps) => {
       </div>
       <button
         onClick={() => scroll(300)}
-        className="absolute right-0 top-1/2 -translate-y-1/2 h-[300px] bg-dark bg-opacity-10 text-white p-2"
+        className="absolute right-0 top-1/2 -translate-y-1/2 h-[300px] bg-white bg-opacity-10 text-white p-2"
       >
         <LucideMoveRight />
       </button>

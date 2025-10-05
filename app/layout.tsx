@@ -3,6 +3,7 @@ import "./globals.css";
 import LocalFont from "next/font/local";
 import { ClerkProvider } from "@clerk/nextjs";
 import { dark } from "@clerk/themes";
+import { Toaster } from "@/components/ui/sonner";
 const poppinsSans = LocalFont({
   src: [
     { path: "/fonts/Poppins-Regular.ttf", weight: "400", style: "normal" },
@@ -41,6 +42,7 @@ export default function RootLayout({
           className={`${poppinsSans.className} ${latoSans.className} antialiased`}
         >
           {children}
+          <Toaster />
         </body>
       </html>
     </ClerkProvider>

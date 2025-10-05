@@ -1,77 +1,95 @@
+"use client";
 import React, { useEffect, useState } from "react";
 import Skeleton from "@/components/Skeleton";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
-interface Movie {
-    id: number;
-    title: string;
-    name: string;
-    first_air_date: string;
-    poster_path: string;
-    last_episode_to_air: { runtime: number };
-    next_episode_to_air: { runtime: number };
-    backdrop_path: string;
-    runtime: number;
-    release_date: string;
-    production_companies: [
-      {
-        name: string;
-        id: number;
-      }
-    ]
-    overview: string;
-    vote_average: number;
-  };
 
-const Recommendation = ({ id, type }: { id: number; type: string }) => {
-  const [movies, setMovies] = useState();
+interface MovieProps {
+  id: number;
+  poster_path: string;
+  title?: string;
+  name?: string;
+}
+
+const Recommendation = ({ id, type }: { id:  string | string[] | undefined; type: string }) => {
+  const [movies, setMovies] = useState<MovieProps[]>([]);
   const router = useRouter();
 
   const getRecommendations = async () => {
     try {
       const recommendations = await fetch(
-        `/api/movies/recommendations?id=${id}&type=${type}`,
+        `/api/movies/recommendations?id=${id}&type=${type}`
       );
-      // const data = await recommendations.json();
-      const movieText = await recommendations.text(); // Read as text first
-      const movieData = movieText.trim() ? JSON.parse(movieText) : {};
-      setMovies(movieData.results);
-      console.log(movieData);
+      const text = await recommendations.text();
+      const data = text.trim() ? JSON.parse(text) : {};
+      setMovies(data.results || []);
     } catch (error) {
-      console.error(error);
+      console.error("Error fetching recommendations:", error);
     }
   };
 
   useEffect(() => {
     getRecommendations();
-  }, []);
+  }, [id, type]);
 
   return (
-    <div className={"flex flex-col gap-4"}>
-      <h2 className={"font-bold text-white font-lato"}>Recommendations</h2>
-      <div className={"flex gap-2 flex-wrap"}>
-        {movies
-          ? movies
-              .slice(0, 10)
-              .map((movie: Movie) => (
-                <img
-                  key={movie.id}
-                  src={`https://image.tmdb.org/t/p/original/${movie?.poster_path}`}
-                  alt={movie.name || movie.title}
-                  className="cursor-pointer"
-                  onClick={() =>
-                    router.push(
-                      `/${type === "tv" ? "series" : type}/${movie.id}`,
-                    )
+    <section className="flex flex-col gap-4 mt-6">
+      <h2 className="font-bold text-white font-lato text-lg md:text-xl">
+        Recommendations
+      </h2>
+
+      {/* Responsive scrollable container */}
+      <div
+        className="
+          flex gap-3
+          overflow-x-auto
+          md:overflow-x-visible
+          flex-nowrap md:flex-wrap
+          scrollbar-hide
+          pb-2
+        "
+      >
+        {movies.length > 0
+          ? movies.slice(0, 10).map((movie) => (
+              <div
+                key={movie.id}
+                className="
+                  flex-shrink-0
+                  w-[120px] sm:w-[150px] md:w-[180px] lg:w-[200px]
+                  cursor-pointer
+                  transition-transform
+                  hover:scale-105
+                "
+                onClick={() =>
+                  router.push(`/${type === "tv" ? "series" : type}/${movie.id}`)
+                }
+              >
+                <Image
+                  src={
+                    movie.poster_path
+                      ? `https://image.tmdb.org/t/p/original/${movie.poster_path}`
+                      : `data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8z8AHAAMBAQAYj0lcAAAAAElFTkSuQmCC`
                   }
+                  alt={movie.name || movie.title || "movie"}
                   width={200}
                   height={300}
+                  className="rounded-md object-cover"
+                  placeholder="blur"
+                  blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8z8AHAAMBAQAYj0lcAAAAAElFTkSuQmCC"
                 />
-              ))
-          : Array.from({ length: 8 }).map((_, index) => (
-              <Skeleton key={index} />
+              </div>
+            ))
+          : Array.from({ length: 8 }).map((_, i) => (
+              <div
+                key={i}
+                className="flex-shrink-0 w-[120px] sm:w-[150px] md:w-[180px] lg:w-[200px]"
+              >
+                <Skeleton />
+              </div>
             ))}
       </div>
-    </div>
+    </section>
   );
 };
+
 export default Recommendation;

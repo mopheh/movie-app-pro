@@ -2,7 +2,8 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   DefaultValues,
-  FieldValues, Path,
+  FieldValues,
+  Path,
   SubmitHandler,
   useForm,
   UseFormReturn,
@@ -32,7 +33,6 @@ const AuthForm = <T extends FieldValues>({
   type,
   schema,
   defaultValues,
-  onSubmit,
 }: Props<T>) => {
   const isSignIn = type === "SIGN_IN";
 
@@ -71,8 +71,14 @@ const AuthForm = <T extends FieldValues>({
                     <Input
                       required
                       type={FIELD_TYPES[field.name as keyof typeof FIELD_TYPES]}
-                      className={"form-input placeholder:text-gray-800 placeholder:text-sm"}
-                      placeholder={field.name === "password" ? 'Atleast 8 character long': ""}
+                      className={
+                        "form-input placeholder:text-gray-800 placeholder:text-sm"
+                      }
+                      placeholder={
+                        field.name === "password"
+                          ? "Atleast 8 character long"
+                          : ""
+                      }
                       autoComplete="off"
                       {...field}
                     />

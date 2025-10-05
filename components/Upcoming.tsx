@@ -29,13 +29,13 @@ const Upcoming = ({
       const movieFound = await Promise.all(
         data.results.map(async (result) => {
           const movieDetails = await fetch(
-            `/api/movies/details?id=${result.id}&type=movie`,
+            `/api/movies/details?id=${result.id}&type=movie`
           );
           if (!movieDetails.ok) {
             throw new Error(`HTTP error! Status: ${movieDetails.status}`);
           }
           return movieDetails.json();
-        }),
+        })
       );
       // @ts-ignore
       setMovie(movieFound);
@@ -66,10 +66,15 @@ const Upcoming = ({
             }
           >
             <Image
-              src={`https://image.tmdb.org/t/p/original/${item?.poster_path}`}
+              src={
+                `https://image.tmdb.org/t/p/original/${item?.poster_path}` ??
+                `data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8z8AHAAMBAQAYj0lcAAAAAElFTkSuQmCC`
+              }
               alt={item?.name || item?.title}
               width={150}
               height={226}
+              placeholder="blur"
+              blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8z8AHAAMBAQAYj0lcAAAAAElFTkSuQmCC"
             />
             <div className={"flex flex-col gap-3 p-5"}>
               <div className={"flex gap-2 items-center"}>

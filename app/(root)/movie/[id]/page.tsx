@@ -1,129 +1,36 @@
 "use client";
-import type { Metadata } from "next";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect } from "react";
 import { Button } from "@/components/ui/button";
-
 import { PlusIcon, Volume2, VolumeX } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
-import ReactPlayer from "react-player";
 import Image from "next/image";
+const ReactPlayer = dynamic(() => import("react-player/youtube"), {
+  ssr: false,
+});
 import Info from "@/components/Info";
 import Casts from "@/components/Casts";
 import Head from "next/head";
-import type { Metadata } from "next";
 import Recommendation from "@/components/Recommendation";
+import { useMovie } from "@/hooks/useMovies";
+import dynamic from "next/dynamic";
 
-type genre = {
-  id: number;
-  name: string;
-};
-type spoken_language = {
-  english_name: string;
-};
-type collection = {
-  id: number;
-  name: string;
-};
-interface Movie {
-  id: number;
-  title: string;
-  name: string;
-  poster_path: string;
-  genres: [genre];
-  spoken_languages: [spoken_language];
-  backdrop_path: string;
-  belongs_to_collection: collection;
-  runtime: number;
-  release_date: string;
-  overview: string;
-  vote_average: number;
-  casts: [];
-}
-type MovieVideo = {
-  key: string;
-  site: string;
-  type: string;
-};
-
-type MovieData = {
-  results: MovieVideo[];
-};
 const Page = () => {
   const { id: movieId } = useParams();
-  const [movie, setMovie] = useState<Movie | null>(null);
   const router = useRouter();
-  const [showVideo, setShowVideo] = useState<boolean>(false);
-  const [collections, setCollections] = useState<Movie[]>([]);
-  const [trailer, setTrailer] = useState<string | null>();
-  const [isMuted, setIsMuted] = useState<boolean>(true);
 
-  // @ts-ignore
-  const playerRef = useRef<InstanceType<typeof ReactPlayer> | null>(null);
+  const {
+    movie,
+    showVideo,
+    isMuted,
+    trailer,
+    collections,
+    playerRef,
+    toggleMute,
+  } = useMovie(`/api/movies/details?id=${movieId}&type=movie`);
 
-  const getMovieDetails = async () => {
-    try {
-      const movieDetails = await fetch(
-        `/api/movies/details?id=${movieId}&type=movie`,
-      );
-
-      if (!movieDetails.ok) {
-        throw new Error(`HTTP error! Status: ${movieDetails.status}`);
-      }
-      const movieText = await movieDetails.text(); // Read as text first
-      const movieData = movieText.trim() ? JSON.parse(movieText) : {};
-      setMovie(movieData);
-      console.log(movieData);
-
-      if (movieData.belongs_to_collection) {
-        const collectionDetails = await fetch(
-          `/api/movies/collection?id=${movieData.belongs_to_collection.id}`,
-        );
-        const data = await collectionDetails.json();
-        console.log(data);
-        setCollections(data.parts);
-      }
-      await fetchTrailer(movieData.videos);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-  const fetchTrailer = async (movie: MovieData) => {
-    const trailer = movie.results.find(
-      (video) => video.type === "Trailer" && video.site === "YouTube",
-    );
-    if (trailer) {
-      setTrailer(`https://www.youtube.com/watch?v=${trailer.key}`);
-      setShowVideo(true);
-    } else {
-      setTrailer(null);
-      setShowVideo(false);
-    }
-  };
-  useEffect(() => {
-    getMovieDetails();
-    const timer = setTimeout(() => {
-      setShowVideo(true);
-    }, 5000);
-
-    return () => clearTimeout(timer);
-  }, []);
   useEffect(() => {
     document.title = `${movie?.title || movie?.name} || Strimz`;
   }, [movie]);
-  const toggleMute = () => {
-    if (playerRef.current) {
-      const internalPlayer = playerRef.current.getInternalPlayer();
-      if (isMuted) {
-        internalPlayer?.unMute();
-        setIsMuted(false);
-        console.log("🔊 Unmuted!");
-      } else {
-        internalPlayer?.mute();
-        setIsMuted(true);
-        console.log("🔇 Muted!");
-      }
-    }
-  };
 
   return (
     <>
@@ -131,44 +38,50 @@ const Page = () => {
         <title>{movie?.title || movie?.name} || Strimz</title>
         <meta name="description" content={movie?.overview} />
       </Head>
-      <div className={"flex flex-col gap-3"}>
-        <div className={"pl-7 xs:pl-12 md:pl-20 flex gap-3 h-[783px] relative"}>
-          <div className={"flex flex-col gap-3 mt-16 w-[25%]"}>
-            <div className={"flex justify-between items-center"}>
+      <div className="flex flex-col gap-3 mt-5 px-3 md:px-0">
+        {/* Main Video + Poster Section */}
+        <div className="sm:pl-7 md:pl-12 lg:pl-20 flex flex-col lg:flex-row gap-6 lg:gap-3 h-auto lg:h-[783px] relative">
+          {/* Poster Section */}
+          <div className="flex flex-col gap-3 mt-8 lg:mt-16 w-full lg:w-[25%]">
+            <div className="flex justify-between items-center">
               <Button
-                className={
-                  "bg-gray-600 text-xs rounded-full px-8 text-white font-poppins"
-                }
+                className="bg-gray-600 text-xs rounded-full px-6 sm:px-8 text-white font-poppins"
                 onClick={() => router.back()}
               >
                 ⬅ Go Back
               </Button>
-              <Button
-                className={
-                  "rounded-full border-2 hover:bg-dark-400 border-white bg-transparent text-white"
-                }
-              >
+              <Button className="rounded-full border-2 hover:bg-dark-400 border-white bg-transparent text-white">
                 <PlusIcon />
               </Button>
             </div>
             {movie ? (
-              <img
-                src={`https://image.tmdb.org/t/p/original/${movie?.poster_path}`}
-                alt={"movie"}
-                className={"cursor-pointer"}
-                width="100%"
-                height="100%"
-              />
+              <div className="relative w-full aspect-[2/3] overflow-hidden rounded-lg">
+                <Image
+                  src={
+                    movie.poster_path
+                      ? `https://image.tmdb.org/t/p/original/${movie.poster_path}`
+                      : `data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8z8AHAAMBAQAYj0lcAAAAAElFTkSuQmCC`
+                  }
+                  alt="movie"
+                  fill
+                  className="object-cover transition-opacity duration-700 ease-in-out opacity-0"
+                  placeholder="blur"
+                  blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAoMBgAqJ2H8AAAAASUVORK5CYII="
+                  onLoadingComplete={(img) => img.classList.remove("opacity-0")}
+                />
+              </div>
             ) : (
-              <div className="animate-pulse bg-gray-800 rounded-lg w-full h-full" />
+              <div className="animate-pulse bg-gray-800 rounded-lg w-full h-[400px]" />
             )}
           </div>
+
+          {/* Video Section */}
           {movie ? (
             <>
-              <div className="inset-0 bg-top gap-4 bg-cover relative -z-0 transition-opacity duration-1000 w-[75%] h-[640px]">
+              <div className="relative w-full lg:w-[75%] h-[400px] sm:h-[500px] lg:h-[640px] transition-opacity duration-1000">
                 {!showVideo || !trailer ? (
                   <div
-                    className="h-full w-full inset-0 bg-cover brightness-75 transition-opacity duration-1000"
+                    className="h-full w-full bg-cover bg-center brightness-75 transition-opacity duration-1000 rounded-lg"
                     style={{
                       backgroundImage: `url(https://image.tmdb.org/t/p/original/${movie?.backdrop_path || ""})`,
                     }}
@@ -176,60 +89,66 @@ const Page = () => {
                 ) : (
                   trailer && (
                     <ReactPlayer
-                      ref={(player) => (playerRef.current = player)}
+                      ref={(player: any) => (playerRef.current = player)}
                       url={trailer}
-                      playing={true} // ✅ Auto Play
-                      muted={isMuted} // ✅ Start Muted
-                      volume={1} // ✅ Max Volume
+                      playing
+                      muted={isMuted}
+                      volume={1}
                       controls={false}
-                      loop={true}
+                      loop
                       width="100%"
                       height="100%"
-                      className="relative inset-0"
-                      onReady={() => {
-                        console.log("✅ Video is ready");
-                        setShowVideo(true);
-                      }}
+                      className="rounded-lg overflow-hidden"
                     />
                   )
                 )}
-                <div className="absolute inset-0 bg-black opacity-20"></div>
+                <div className="absolute inset-0 bg-black opacity-20 rounded-lg"></div>
                 {showVideo && (
                   <button
                     onClick={toggleMute}
-                    className="absolute bottom-36 right-5 z-30 bg-black/70 p-3 rounded-full text-gray-300 hover:text-white flex items-center justify-center"
+                    className="absolute bottom-10 right-5 z-30 bg-black/70 p-3 rounded-full text-gray-300 hover:text-white flex items-center justify-center"
                   >
                     {isMuted ? <VolumeX size={24} /> : <Volume2 size={24} />}
                   </button>
                 )}
-                <Info movie={movie} />
               </div>
+              <Info movie={movie} />
             </>
           ) : (
-            <div className="animate-pulse bg-gray-800 rounded-lg w-[75%] h-[640px]" />
+            <div className="animate-pulse bg-gray-800 rounded-lg w-full lg:w-[75%] h-[640px]" />
           )}
         </div>
-        <div className={"w-full px-7 xs:px-12 md:px-20"}>
-          <div className={"flex w-full"}>
-            <div className={"w-[70%]"}>
-              <Recommendation id={movieId} type={"movie"} />
+
+        {/* Recommendations + Collections */}
+        <div className="w-full px-4 sm:px-7 md:px-12 lg:px-20 mt-6">
+          <div className="flex flex-col lg:flex-row w-full gap-6 lg:gap-10">
+            <div className="w-full lg:w-[70%]">
+              <Recommendation id={movieId} type="movie" />
             </div>
-            <div className={"w-[30%]"}>
-              <h2 className={"font-bold text-white font-lato"}>
-                Collections ({`${collections.length}`})
+            <div className="w-full lg:w-[30%]">
+              <h2 className="font-bold text-white font-lato mb-2">
+                Collections ({collections.length})
               </h2>
-              <div className={"flex flex-wrap gap-2"}>
+              <div className="flex flex-wrap gap-3 justify-center sm:justify-start">
                 {collections.length > 0 &&
                   collections.map((collection) => (
-                    <img
+                    <div
                       key={collection.id}
-                      src={`https://image.tmdb.org/t/p/original/${collection?.poster_path}`}
-                      alt={collection.name || collection.title}
-                      className="cursor-pointer"
+                      className="relative w-[140px] sm:w-[180px] h-[210px] sm:h-[260px] cursor-pointer rounded-lg overflow-hidden"
                       onClick={() => router.push(`/movie/${collection.id}`)}
-                      width={200}
-                      height={300}
-                    />
+                    >
+                      <Image
+                        src={`https://image.tmdb.org/t/p/original/${collection?.poster_path}`}
+                        alt={collection.name || collection.title}
+                        fill
+                        className="object-cover transition-opacity duration-700 ease-in-out opacity-0"
+                        placeholder="blur"
+                        blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAoMBgAqJ2H8AAAAASUVORK5CYII="
+                        onLoadingComplete={(img) =>
+                          img.classList.remove("opacity-0")
+                        }
+                      />
+                    </div>
                   ))}
               </div>
             </div>
