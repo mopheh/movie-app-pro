@@ -2,21 +2,10 @@
 import React from "react";
 import Image from "next/image";
 import Skeleton from "@/components/Skeleton";
+import {MovieProps} from "@/index";
 
-type Cast = {
-  id: number;
-  name: string;
-  profile_path: string | null;
-  character: string;
-};
 
-interface Movie {
-  movie: {
-    casts: { cast: Cast[] };
-  };
-}
-
-const Casts = ({ movie }: Movie) => {
+const Casts = ({ movie }: { movie: MovieProps | null }) => {
   const casts = movie?.casts?.cast?.slice(0, 12) || [];
 
   return (

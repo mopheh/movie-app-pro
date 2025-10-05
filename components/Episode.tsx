@@ -1,5 +1,6 @@
 import React from "react";
 import Image from "next/image";
+import {Movie} from "@/app/(root)/series/[id]/season/[season_num]/page";
 type episode = {
   id: number;
   air_date: string;
@@ -10,7 +11,7 @@ type episode = {
   vote_average: number;
   runtime: number;
 };
-const Episode = ({ movie }: {movie: {episodes: episode[]}}) => {
+const Episode = ({ movie }: {movie: Movie | null}) => {
   return (
     <div className={"w-full flex flex-col gap-4"}>
       <h2 className={"font-bold text-white font-lato"}>
