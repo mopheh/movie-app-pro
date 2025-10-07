@@ -25,7 +25,7 @@ const Page = () => {
     <div>
       <Now setId={setMovieId} setShowTrailer={setShowTrailer} />
       <Upcoming setId={setMovieId} setShowTrailer={setShowTrailer} />
-      {showTrailer && <SideContent id={movieId} onClose={close} />}
+      {showTrailer && <SideContent id={movieId!} onClose={close} />}
     </div>
   );
 };
