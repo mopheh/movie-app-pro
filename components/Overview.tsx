@@ -11,6 +11,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useMovie } from "@/hooks/useMovies";
 import { useRouter } from "next/navigation";
 import useFetch from "@/hooks/useFetch";
+import { OverviewProps } from "@/index";
 
 const Overview = ({ type }: OverviewProps) => {
   const { movieId, mediaType } = useFetch(`/api/overview?type=${type}`);
@@ -46,7 +47,7 @@ const Overview = ({ type }: OverviewProps) => {
       ) : (
         trailer && (
           <ReactPlayer
-            ref={(player) => (playerRef.current = player)}
+            ref={(player: any) => (playerRef.current = player)}
             url={trailer}
             playing={true}
             muted={isMuted}
