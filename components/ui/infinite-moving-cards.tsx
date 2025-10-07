@@ -28,7 +28,7 @@ export const InfiniteMovingCards = ({
   pauseOnHover?: boolean;
   className?: string;
   setId?: (id: number) => void;
-  setShowTrailer?: boolean;
+  setShowTrailer?: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   const containerRef = React.useRef<HTMLDivElement>(null);
   const scrollerRef = React.useRef<HTMLUListElement>(null);
@@ -59,12 +59,12 @@ export const InfiniteMovingCards = ({
       if (direction === "left") {
         containerRef.current.style.setProperty(
           "--animation-direction",
-          "forwards",
+          "forwards"
         );
       } else {
         containerRef.current.style.setProperty(
           "--animation-direction",
-          "reverse",
+          "reverse"
         );
       }
     }
@@ -85,7 +85,7 @@ export const InfiniteMovingCards = ({
       ref={containerRef}
       className={cn(
         "scroller relative z-20  max-w-screen-2xl overflow-hidden  [mask-image:linear-gradient(to_right,transparent,white_20%,white_80%,transparent)]",
-        className,
+        className
       )}
     >
       <ul
@@ -93,13 +93,13 @@ export const InfiniteMovingCards = ({
         className={cn(
           " flex min-w-full shrink-0 gap-4 py-4 w-max flex-nowrap",
           start && "animate-scroll ",
-          pauseOnHover && "hover:[animation-play-state:paused]",
+          pauseOnHover && "hover:[animation-play-state:paused]"
         )}
       >
         {items &&
           items.map((item, idx) => (
             <li
-                key={idx}
+              key={idx}
               className="w-[500px] max-w-full relative h-[386px]  bg-cover rounded-2xl border border-b-0 flex-shrink-0 border-slate-700 px-8 py-6 md:w-[700px]"
               style={{
                 backgroundImage: `url(https://image.tmdb.org/t/p/original/${item?.backdrop_path})`,
@@ -115,11 +115,11 @@ export const InfiniteMovingCards = ({
                   <img
                     src={
                       item?.images?.logos?.find(
-                        (logo) => logo.iso_639_1 === "en",
+                        (logo) => logo.iso_639_1 === "en"
                       )?.file_path &&
                       `https://image.tmdb.org/t/p/original/${
                         item.images.logos.find(
-                          (logo) => logo.iso_639_1 === "en",
+                          (logo) => logo.iso_639_1 === "en"
                         ).file_path
                       }`
                     }
