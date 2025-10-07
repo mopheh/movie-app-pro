@@ -1,3 +1,4 @@
+import { MovieProps } from "@/index";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
