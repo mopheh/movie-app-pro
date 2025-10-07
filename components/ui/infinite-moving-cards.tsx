@@ -22,13 +22,22 @@ export const InfiniteMovingCards = ({
     backdrop_path: string;
     media_type: string;
     runtime: number;
+    images?: {
+      logos?: {
+        file_path: string;
+        iso_639_1: string;
+      }[];
+    };
+    genres: {
+      name: string;
+    }[];
   }[];
   direction?: "left" | "right";
   speed?: "fast" | "normal" | "slow";
   pauseOnHover?: boolean;
   className?: string;
-  setId?: (id: number) => void;
-  setShowTrailer?: React.Dispatch<React.SetStateAction<boolean>>;
+  setId: React.Dispatch<React.SetStateAction<number | null>>;
+  setShowTrailer: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   const containerRef = React.useRef<HTMLDivElement>(null);
   const scrollerRef = React.useRef<HTMLUListElement>(null);
@@ -112,27 +121,40 @@ export const InfiniteMovingCards = ({
                 }
               >
                 <h1 className="relative z-20 text-4xl leading-[1.6] text-white font-anton font-normal">
-                  <img
-                    src={
-                      item?.images?.logos?.find(
-                        (logo) => logo.iso_639_1 === "en"
-                      )?.file_path &&
-                      `https://image.tmdb.org/t/p/original/${
-                        item.images.logos.find(
-                          (logo) => logo.iso_639_1 === "en"
-                        ).file_path
-                      }`
-                    }
-                    alt={item?.title || item?.name}
-                    width={"40%"}
-                  />
+                  {(() => {
+                    const logo = item?.images?.logos?.find(
+                      (logo) => logo.iso_639_1 === "en"
+                    );
+
+                    const imageUrl = logo?.file_path
+                      ? `https://image.tmdb.org/t/p/original/${logo.file_path}`
+                      : item?.backdrop_path
+                        ? `https://image.tmdb.org/t/p/original/${item.backdrop_path}`
+                        : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8z8AHAAMBAQAYj0lcAAAAAElFTkSuQmCC";
+
+                    return (
+                      <img
+                        src={imageUrl}
+                        alt={item?.title || item?.name || "Movie logo"}
+                        className="max-w-[40%] object-contain rounded-xl transition-transform duration-300 hover:scale-105"
+                        loading="lazy"
+                        onError={(e) => {
+                          e.currentTarget.src =
+                            "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8z8AHAAMBAQAYj0lcAAAAAElFTkSuQmCC";
+                        }}
+                      />
+                    );
+                  })()}
                 </h1>
+
                 <span className="relative z-20 text-sm leading-[1.6] text-gray-50 font-poppins font-normal">
                   <div className={"flex gap-5 my-2"}>
                     <div className={"flex gap-3"}>
                       <span className={"text-gray-300"}>Genres:</span>
                       <span className={"text-[#10E305]"}>
-                        {item.genres.map((genre) => `${genre.name}, `)}
+                        {item.genres.map(
+                          (genre: { name: any }) => `${genre.name}, `
+                        )}
                       </span>
                     </div>
                     <div className={"flex gap-1"}>
