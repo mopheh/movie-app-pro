@@ -15,7 +15,7 @@ const Popular = ({ type }: PopularProps) => {
       >
         New & Popular
       </h1>
-      <PopularList type={type} />
+      <PopularList type={type ?? ""} />
     </div>
   );
 };
