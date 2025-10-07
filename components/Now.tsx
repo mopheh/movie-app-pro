@@ -1,14 +1,11 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { InfiniteMovingCards } from "@/components/ui/infinite-moving-cards";
-
-export function Now({
-  setId,
-  setShowTrailer,
-}: {
-  setId?: (id: number) => void;
-  setShowTrailer?: boolean;
-}) {
+type NowProps = {
+  setId: (id: string) => void;
+  setShowTrailer: React.Dispatch<React.SetStateAction<boolean>>;
+};
+export function Now({ setId, setShowTrailer }: NowProps) {
   const [movie, setMovie] = useState<[]>([]);
   const getMovies = async () => {
     try {
@@ -28,13 +25,13 @@ export function Now({
       const movieFound = await Promise.all(
         data.results.map(async (result) => {
           const movieDetails = await fetch(
-            `/api/movies/details?id=${result.id}&type=movie`,
+            `/api/movies/details?id=${result.id}&type=movie`
           );
           if (!movieDetails.ok) {
             throw new Error(`HTTP error! Status: ${movieDetails.status}`);
           }
           return movieDetails.json();
-        }),
+        })
       );
       setMovie(movieFound);
     } catch (error) {

@@ -2,14 +2,12 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { BookmarkIcon } from "lucide-react";
+type UpcomingProps = {
+  setId: (id: string) => void;
+  setShowTrailer: React.Dispatch<React.SetStateAction<boolean>>;
+};
 
-const Upcoming = ({
-  setId,
-  setShowTrailer,
-}: {
-  setId?: (id: number) => void;
-  setShowTrailer?: boolean;
-}) => {
+const Upcoming = ({ setId, setShowTrailer }: UpcomingProps) => {
   const [movie, setMovie] = useState<[]>([]);
   const getMovies = async () => {
     try {
@@ -66,8 +64,9 @@ const Upcoming = ({
           >
             <Image
               src={
-                  item.poster_path ? `https://image.tmdb.org/t/p/original/${item?.poster_path}` :
-                `data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8z8AHAAMBAQAYj0lcAAAAAElFTkSuQmCC`
+                item.poster_path
+                  ? `https://image.tmdb.org/t/p/original/${item?.poster_path}`
+                  : `data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8z8AHAAMBAQAYj0lcAAAAAElFTkSuQmCC`
               }
               alt={item?.name || item?.title}
               width={150}
