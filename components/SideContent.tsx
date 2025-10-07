@@ -83,7 +83,7 @@ const SideContent = ({ id, onClose }: { id: number; onClose: () => void }) => {
               <div className={"flex gap-2"}>
                 <div className={"text-gray-400"}>Genre:</div>
                 <div className={"capitalize text-white"}>
-                  {movie.genres.map((genre) => `${genre.name}, `)}
+                  {movie.genres.map((genre: { name: any; }) => `${genre.name}, `)}
                 </div>
               </div>
             </div>
@@ -94,7 +94,7 @@ const SideContent = ({ id, onClose }: { id: number; onClose: () => void }) => {
             <div className={"text-xs"}>
               <div className={"text-gray-400"}>Casts:</div>
               <div className={"text-white"}>
-                {movie.casts.cast.slice(0, 4).map((cast) => `${cast.name}, `)}{" "}
+                {movie.casts.cast.slice(0, 4).map((cast: { name: any; }) => `${cast.name}, `)}{" "}
                 and more
               </div>
             </div>
@@ -107,7 +107,7 @@ const SideContent = ({ id, onClose }: { id: number; onClose: () => void }) => {
                 <div className={"text-gray-400"}>Production Companies:</div>
                 <div className={"capitalize text-white flex gap-3"}>
                   {movie.production_companies.map(
-                    (company) => `${company.name},  `
+                    (company: { name: any; }) => `${company.name},  `
                   )}
                 </div>
               </div>

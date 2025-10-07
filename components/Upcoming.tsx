@@ -8,7 +8,7 @@ type UpcomingProps = {
 };
 
 const Upcoming = ({ setId, setShowTrailer }: UpcomingProps) => {
-  const [movie, setMovie] = useState<[]>([]);
+  const [movie, setMovie] = useState<any[]>([]);
   const getMovies = async () => {
     try {
       const movies = await fetch("/api/movies/upcoming");
@@ -25,7 +25,7 @@ const Upcoming = ({ setId, setShowTrailer }: UpcomingProps) => {
       console.log(movieId);
       console.log(data.results);
       const movieFound = await Promise.all(
-        data.results.map(async (result) => {
+        data.results.map(async (result: { id: any; }) => {
           const movieDetails = await fetch(
             `/api/movies/details?id=${result.id}&type=movie`
           );
@@ -88,7 +88,7 @@ const Upcoming = ({ setId, setShowTrailer }: UpcomingProps) => {
                     <span className={"text-white"}> / 10</span>
                   </span>
                 </div>
-                <div>{item.genres.map((genre) => `${genre.name}, `)}</div>
+                <div>{item.genres.map((genre: { name: any; }) => `${genre.name}, `)}</div>
               </div>
               <div className={"flex gap-3"}>
                 <span>

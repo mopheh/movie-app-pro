@@ -78,7 +78,7 @@ const Header = () => {
           {isSignedIn ? (
             <>
               <div
-                className="rounded-full font-bebas-neue text-sm bg-contain w-[35px] h-[35px] sm:w-[40px] sm:h-[40px] text-dark-300 flex items-center justify-center font-light tracking-wide bg-center bg-cover"
+                className="rounded-full font-bebas-neue text-sm w-[35px] h-[35px] sm:w-[40px] sm:h-[40px] text-dark-300 flex items-center justify-center font-light tracking-wide bg-center bg-cover"
                 style={{ backgroundImage: `url(${user?.imageUrl})` }}
               />
               <h3 className="font-nunito-sans text-white text-sm sm:text-base hidden xs:block">

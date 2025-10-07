@@ -5,12 +5,12 @@ import Image from "next/image";
 import { LucideMoveLeft, LucideMoveRight } from "lucide-react";
 import Skeleton from "@/components/Skeleton";
 import useFetch from "@/hooks/useFetch";
-import { TrendingProps } from "@/index";
+import { MovieProps, TrendingProps } from "@/index";
 
 const Trending = ({ type }: TrendingProps) => {
   const { results: movies } = useFetch(`/api/movies/trending?type=${type}`);
   console.log(movies);
-  const scrollRef: RefObject<null> = useRef<null>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   const scroll = (offset: number) => {
     if (scrollRef.current) {
