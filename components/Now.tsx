@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { InfiniteMovingCards } from "@/components/ui/infinite-moving-cards";
 type NowProps = {
-  setId: (id: string) => void;
+  setId: React.Dispatch<React.SetStateAction<number | null>>;
   setShowTrailer: React.Dispatch<React.SetStateAction<boolean>>;
 };
 export function Now({ setId, setShowTrailer }: NowProps) {

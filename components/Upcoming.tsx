@@ -3,7 +3,7 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { BookmarkIcon } from "lucide-react";
 type UpcomingProps = {
-  setId: (id: string) => void;
+  setId: React.Dispatch<React.SetStateAction<number | null>>;
   setShowTrailer: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
