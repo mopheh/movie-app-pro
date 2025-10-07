@@ -5,6 +5,7 @@ import Image from "next/image";
 import { LucideMoveLeft, LucideMoveRight } from "lucide-react";
 import Skeleton from "@/components/Skeleton";
 import useFetch from "@/hooks/useFetch";
+import { TrendingProps } from "@/index";
 
 const Trending = ({ type }: TrendingProps) => {
   const { results: movies } = useFetch(`/api/movies/trending?type=${type}`);
