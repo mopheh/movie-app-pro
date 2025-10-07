@@ -6,7 +6,8 @@ type NowProps = {
   setShowTrailer: React.Dispatch<React.SetStateAction<boolean>>;
 };
 export function Now({ setId, setShowTrailer }: NowProps) {
-  const [movie, setMovie] = useState<[]>([]);
+  const [movie, setMovie] = useState<any[]>([]);
+
   const getMovies = async () => {
     try {
       const movies = await fetch("/api/movies/showing");
@@ -23,7 +24,7 @@ export function Now({ setId, setShowTrailer }: NowProps) {
       console.log(movieId);
       console.log(data.results);
       const movieFound = await Promise.all(
-        data.results.map(async (result) => {
+        data.results.map(async (result: { id: number; [key: string]: any }) => {
           const movieDetails = await fetch(
             `/api/movies/details?id=${result.id}&type=movie`
           );
