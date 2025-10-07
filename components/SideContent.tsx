@@ -4,9 +4,9 @@ import ReactPlayer from "react-player";
 import Image from "next/image";
 import { useMovie } from "@/hooks/useMovies";
 
-const SideContent = ({ id, onClose }: { id: number; onClose: void }) => {
+const SideContent = ({ id, onClose }: { id: number; onClose: () => void }) => {
   const { movie, trailer, englishLogo } = useMovie(
-    `/api/movies/details?id=${id}&type=movie`,
+    `/api/movies/details?id=${id}&type=movie`
   );
 
   return (
@@ -18,7 +18,6 @@ const SideContent = ({ id, onClose }: { id: number; onClose: void }) => {
         <div className="fixed right-0 top-0 w-1/3 flex flex-col gap-3 h-screen bg-gray-800 z-30 shadow-lg">
           <div
             className="absolute top-8 right-8 flex items-center gap-1 text-white text-sm font-poppins cursor-pointer"
-
             onClick={onClose}
           >
             <XIcon className="h-6 w-6" /> Close
@@ -108,7 +107,7 @@ const SideContent = ({ id, onClose }: { id: number; onClose: void }) => {
                 <div className={"text-gray-400"}>Production Companies:</div>
                 <div className={"capitalize text-white flex gap-3"}>
                   {movie.production_companies.map(
-                    (company) => `${company.name},  `,
+                    (company) => `${company.name},  `
                   )}
                 </div>
               </div>
